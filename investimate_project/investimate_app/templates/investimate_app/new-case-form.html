@@ -13,10 +13,29 @@
       </ol>
     </nav>
     <div class="container">
-      <form action="POST" class="">
+      <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% load crispy_forms_tags %}
-        {{ form|crispy }}
+        {{ form.non_field_errors }}
+        <div>
+          {{ form.name.label_tag }}
+          {{ form.name }}
+          <ul class="errorlist">{{ form.name.errors }}</ul>
+        </div>
+        <div>
+          {{ form.description.label_tag }}
+          {{ form.description }}
+          <ul class="errorlist">{{ form.description.errors }}</ul>
+        </div>
+        <div>
+          {{ form.notes.label_tag }}
+          {{ form.notes }}
+          <ul class="errorlist">{{ form.notes.errors }}</ul>
+        </div>
+        <div>
+          {{ form.files.label_tag }}
+          {{ form.files }}
+          <ul class="errorlist">{{ form.files.errors }}</ul>
+        </div>
         <div class="text-center">
           <button type="submit" class="btn btn-outline-primary block">Add New Case</button>
         </div>

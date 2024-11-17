@@ -2,21 +2,44 @@ from django.shortcuts import render, redirect
 from .forms import CaseForm
 from .models import Case
 
-# Create your views here.
-
 # Home Page
 def home_view(req):
     return render(req, 'investimate_app/home.html')
 
 # Add Case Page
 def add_case_view(req):
-    form = CaseForm()
     if req.method == 'POST':
-        form = CaseForm(req.POST)
+        form = CaseForm(req.POST, req.FILES)
+        form.errors.pop('files', None)
+        files = req.FILES.getlist('files')
+        
+        if not files:
+                form.add_error('files', "No files submitted.")
+                
+        invalid_files = [file.name for file in files if not file.name.endswith('.txt')]
+        if invalid_files:
+            for file in invalid_files:
+                form.add_error('files', f'Invalid file type for file: {file}. Only .txt files are allowed.')
+                
         if form.is_valid():
-            # id = form.save().id
-            return redirect('home')
-    return render(req, 'investimate_app/new-case-form.html', {'form':form})
+            case = form.save(commit=False)
+            file_data = {}
+            for file in files:
+                file_content = file.read().decode('utf-8')
+                if len(file_content) < 1:
+                    form.add_error('files', f"Cannot accept empty file: {file.name}")
+                else:
+                    file_data[file.name] = file_content
+
+            if not form.errors:
+                case.files = file_data
+                case.save()
+                return redirect('case')
+
+        print('Add new case form error:', form.errors)
+    else:
+        form = CaseForm()
+    return render(req, 'investimate_app/new-case-form.html', {'form': form})
 
 # Cases List Page
 def cases_view(req):

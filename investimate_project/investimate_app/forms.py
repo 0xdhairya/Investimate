@@ -1,7 +1,15 @@
 from django import forms
 from .models import Case
 
+class MultiFileInput(forms.ClearableFileInput):
+    def render(self, name, value, attrs=None, renderer=None):
+        attrs = attrs or {}
+        attrs['multiple'] = True  # Allow multiple files
+        return super().render(name, value, attrs, renderer)
+    
 class CaseForm(forms.ModelForm):
+    files = forms.FileField(widget=MultiFileInput(), required=False)
+
     class Meta:
         model = Case
         exclude = ['created_at']
@@ -29,11 +37,11 @@ class CaseForm(forms.ModelForm):
                 attrs={
                     'placeholder': 'Case Notes',
                     'class': 'form-control',
+                    'required': False,
                 }
-            ),
-            'files': forms.FileInput(
-                attrs={
-                    'class': 'form-control',
-                }
-            ),
+            )
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(CaseForm, self).__init__(*args, **kwargs)
+        self.fields['notes'].required = False
