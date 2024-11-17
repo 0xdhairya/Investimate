@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .forms import CaseForm
 from .models import Case
 
@@ -34,7 +35,7 @@ def add_case_view(req):
             if not form.errors:
                 case.files = file_data
                 case.save()
-                return redirect('case')
+                return redirect(reverse('case', args=[case.id]))
 
         print('Add new case form error:', form.errors)
     else:
