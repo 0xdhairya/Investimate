@@ -1,0 +1,26 @@
+{% extends 'investimate_app/layout.html' %}
+{% block title %}
+  New Case
+{% endblock %}
+{% block content %}
+  <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Add Case</li>
+      </ol>
+    </nav>
+    <div class="container">
+      <form action="POST" class="">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        {{ form|crispy }}
+        <div class="text-center">
+          <button type="submit" class="btn btn-outline-primary block">Add New Case</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
