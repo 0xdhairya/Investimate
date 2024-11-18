@@ -12,7 +12,7 @@ class CaseForm(forms.ModelForm):
 
     class Meta:
         model = Case
-        exclude = ['created_at']
+        exclude = ['created_at', 'status']
         fields = '__all__'
         labels = {
             'name' : 'Name',

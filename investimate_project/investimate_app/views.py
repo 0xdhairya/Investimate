@@ -5,7 +5,11 @@ from .models import Case
 
 # Home Page
 def home_view(req):
-    return render(req, 'investimate_app/home.html')
+    recentCases = Case.objects.order_by('-created_at')[:3]
+    activeCases = Case.objects.filter(status=Case.Status.ACTIVE).count()
+    closedCases = Case.objects.filter(status=Case.Status.CLOSED).count()
+    print('Recent Cases', recentCases)
+    return render(req, 'investimate_app/home.html', {'recentCases': recentCases, 'activeCases':activeCases, 'closedCases':closedCases})
 
 # Add Case Page
 def add_case_view(req):
@@ -50,4 +54,4 @@ def cases_view(req):
 # Case Page
 def case_view(req, case_id):
     case = Case.objects.get(id=case_id)
-    return render(req, 'investimate_app/cases.html', {'case':case})
+    return render(req, 'investimate_app/case.html', {'case':case})

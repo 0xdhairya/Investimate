@@ -2,3 +2,30 @@
 {% block title %}
   All Cases
 {% endblock %}
+{% block content %}
+  <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">All Cases</li>
+      </ol>
+    </nav>
+    <div class="container">
+      {% if not cases %}
+        <p>No Data</p>
+      {% else %}
+        <div class="row justify-content-between">
+          {% for case in cases %}
+            <div class="card border-dark shadow-lg p-2 col-12 col-sm-6 col-md-3" onclick="location.href='{% url 'case' case.id %}'">
+              <h2>{{ case.name }}</h2>
+              <p>Status: {{ case.status }}</p>
+              <p>Created at: {{ case.created_at }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
