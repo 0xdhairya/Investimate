@@ -10,14 +10,17 @@
       <div class="col-md-4 card border-dark shadow mt-3 p-3">
         <h2>Recent Cases</h2>
         {% if not recentCases %}
-          <p>No Data</p>
+          <div class="h-100 text-center align-content-center mb-5">
+            <p class="h3">No Cases Yet...</p>
+            <p class="card-subtitle">Create your first case and get started.</p>
+          </div>
         {% else %}
           <div class="row-cols-1 row justify-content-center">
             {% for case in recentCases %}
               <div class="card border-dark shadow mb-3 p-2 col-10" onclick="location.href='{% url 'case' case.id %}'">
                 <h2>{{ case.name }}</h2>
-                <p>Status: {{ case.status }}</p>
-                <p>Created at: {{ case.created_at }}</p>
+                <p class="m-0">Status: {{ case.status }}</p>
+                <p class="m-0">Created at: {{ case.created_at }}</p>
               </div>
             {% endfor %}
           </div>

@@ -97,3 +97,11 @@ def cases_view(req):
 def case_view(req, case_id):
     case = Case.objects.get(id=case_id)
     return render(req, 'investimate_app/case.html', {'case':case})
+
+# Delete Case
+@login_required
+def delete_case_view(req, case_id):
+    if req.method == 'POST':
+        case = Case.objects.get(id=case_id)
+        print('CASE to be deleted', case)
+        return redirect('home')

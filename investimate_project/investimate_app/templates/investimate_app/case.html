@@ -16,5 +16,9 @@
       </ol>
     </nav>
     <div class="container">{{ case.name }}</div>
+    <form action="{% url 'delete-case' case.id %}" method="post">
+      {% csrf_token %}
+      <button class="btn btn btn-outline-danger" type="submit">Delete</button>
+    </form>
   </div>
 {% endblock %}

@@ -16,12 +16,12 @@
       {% if not cases %}
         <p>No Data</p>
       {% else %}
-        <div class="row justify-content-between">
+        <div class="row">
           {% for case in cases %}
-            <div class="card border-dark shadow-lg p-2 col-12 col-sm-6 col-md-3" onclick="location.href='{% url 'case' case.id %}'">
+            <div class="card border-dark shadow-lg p-2 col-12 col-sm-6 col-md-3 mx-2 my-4" onclick="location.href='{% url 'case' case.id %}'">
               <h2>{{ case.name }}</h2>
-              <p>Status: {{ case.status }}</p>
-              <p>Created at: {{ case.created_at }}</p>
+              <p class="m-0">Status: {{ case.status }}</p>
+              <p class="m-0">Created at: {{ case.created_at }}</p>
             </div>
           {% endfor %}
         </div>
