@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
   <div class="container-fluid">
-    <h1>Hello Mr. Conan</h1>
+    <h1>Welcome, {{ request.user.username }}</h1>
     <div class="row justify-content-evenly">
       <div class="col-md-4 card border-dark shadow mt-3 p-3">
         <h2>Recent Cases</h2>

@@ -42,7 +42,10 @@
               <a class="nav-link" href="{% url 'add-case' %}">+ Add Case</a>
             </li>
           </ul>
-          <button class="btn btn btn-outline-light" href="{% url 'add-case' %}">Logout</button>
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn btn-outline-light" type="submit">Logout</button>
+          </form>
         </div>
       </div>
     </nav>
