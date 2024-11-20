@@ -45,7 +45,4 @@
 
 {% block jsScripts %}
   <script src="{% static 'js/home.js' %}"></script>
-  <script>
-    const recentCases = JSON.parse('{{ recentCases|safe }}')
-  </script>
 {% endblock %}

@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+import json
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import authenticate, login, logout
@@ -47,9 +49,18 @@ def logout_view(req):
 def home_view(req):
     activeCases = Case.objects.filter(status=Case.Status.ACTIVE).count()
     closedCases = Case.objects.filter(status=Case.Status.CLOSED).count()
-    recentCases = serialize('json', Case.objects.all().order_by('-created_at')[:3])
-    print('Recent Cases', recentCases)
-    return render(req, 'investimate_app/home.html', {'recentCases': recentCases, 'activeCases':activeCases, 'closedCases':closedCases})
+    return render(req, 'investimate_app/home.html', {'activeCases':activeCases, 'closedCases':closedCases})
+
+# Home API
+@login_required
+def home_api_view(req):
+    cases = list(
+        Case.objects.all()
+        .order_by('-created_at')[:3]
+    )
+    cases_list = serialize('json', cases)
+    return JsonResponse({'recentCases': cases_list})
+
 
 # Add Case Page
 @login_required
@@ -71,14 +82,19 @@ def add_case_view(req):
             case = form.save(commit=False)
             file_data = {}
             for file in files:
-                file_content = file.read().decode('utf-8')
-                if len(file_content) < 1:
-                    form.add_error('files', f"Cannot accept empty file: {file.name}")
-                else:
-                    file_data[file.name] = file_content
-
+                try:
+                    file_content = file.read().decode('utf-8')
+                    if len(file_content) < 1:
+                        form.add_error('files', f"Cannot accept empty file: {file.name}")
+                    else:
+                        # Escape single quotes by serializing to JSON and deserializing back
+                        escaped_content = json.dumps(file_content)  # Escape content
+                        file_data[file.name] = json.loads(escaped_content)  # Parse it back for storage
+                except UnicodeDecodeError:
+                    form.add_error('files', f"Unable to decode file: {file.name}. Ensure it is UTF-8 encoded.")
+            
             if not form.errors:
-                case.files = file_data
+                case.files = json.dumps(file_data)  # Store as a JSON string
                 case.save()
                 return redirect(reverse('case', args=[case.id]))
 
@@ -90,8 +106,17 @@ def add_case_view(req):
 # Cases List Page
 @login_required
 def cases_view(req):
-    cases = serialize('json', Case.objects.all().order_by('-created_at'))
-    return render(req, 'investimate_app/cases.html', {'cases': cases})
+    return render(req, 'investimate_app/cases.html')
+
+# Cases List API
+@login_required
+def cases_api_view(req):
+    cases = list(
+        Case.objects.all()
+        .order_by('-created_at')
+    )
+    cases_list = serialize('json', cases)
+    return JsonResponse({'cases': cases_list})
  
 # Case Page
 @login_required
@@ -99,10 +124,27 @@ def case_view(req, case_id):
     case = Case.objects.get(id=case_id)
     return render(req, 'investimate_app/case.html', {'case':case})
 
+# Case Data API
+@login_required
+def case_api_view(req, case_id):
+    case = get_object_or_404(Case, id=case_id)
+    case_data = serialize('json', [case])
+    return JsonResponse({'case': case_data})
+
 # Delete Case
 @login_required
 def delete_case_view(req, case_id):
     if req.method == 'POST':
-        case = Case.objects.get(id=case_id)
+        case = get_object_or_404(Case, id=case_id)
         case.delete()
         return redirect('home')
+    
+# Close Case
+@login_required
+def close_case_view(req, case_id):
+    if req.method == 'POST':
+        case = get_object_or_404(Case, id=case_id)
+        if case.status != Case.Status.CLOSED:
+            case.status = Case.Status.CLOSED
+            case.save()
+        return redirect('case', case_id=case.id)

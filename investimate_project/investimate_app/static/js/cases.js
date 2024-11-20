@@ -19,8 +19,9 @@ const createCaseTile = (name, date, status, key) => {
     return div;
 };
 
-const populateAllCases = async () => {
+const populateAllCases = (allCases) => {
     const allCasesElement = document.getElementById("all-cases");
+    console.log('ALLLLLLLLL', allCases)
     if (allCases.length === 0) {
         allCasesElement.innerHTML = `
             <div class="container">
@@ -44,4 +45,19 @@ const populateAllCases = async () => {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => populateAllCases());
+document.addEventListener("DOMContentLoaded", () => {
+    fetch('/api/cases/')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const allCases = JSON.parse(data.cases);
+            populateAllCases(allCases);
+        })
+        .catch((error) => {
+            console.error("Error fetching case data:", error);
+        });
+});

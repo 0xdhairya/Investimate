@@ -1,0 +1,68 @@
+.case-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.case-info > * {
+  margin: 0;
+}
+
+.case-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-direction: column;
+}
+
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px;
+  padding: 10px;
+  gap: 10px;
+}
+
+.section-container {
+  flex: 1;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.files {
+  flex: 1;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2px;
+  height: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.file-list {
+  overflow: auto;
+  margin: 10px;
+  padding: 15px;
+  list-style: none;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 768px) {
+  .case-header {
+    flex-direction: column-reverse;
+    align-items: normal;
+}
+  .case-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+  .main-container {
+    flex-direction: column;
+  }
+}
+  

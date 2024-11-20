@@ -27,7 +27,4 @@
 
 {% block jsScripts %}
   <script src="{% static 'js/cases.js' %}"></script>
-  <script>
-    const allCases = JSON.parse('{{ cases|safe }}')
-  </script>
 {% endblock %}

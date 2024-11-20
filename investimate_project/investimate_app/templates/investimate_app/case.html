@@ -1,7 +1,14 @@
 {% extends 'investimate_app/layout.html' %}
+{% load static %}
+
 {% block title %}
   Case
 {% endblock %}
+
+{% block headReferences %}
+  <link rel="stylesheet" href="{% static 'css/case.css' %}" />
+{% endblock %}
+
 {% block content %}
   <div class="container-fluid">
     <nav aria-label="breadcrumb">
@@ -15,10 +22,65 @@
         <li class="breadcrumb-item active" aria-current="page">{{ case.name }}</li>
       </ol>
     </nav>
-    <div class="container">{{ case.name }}</div>
-    <form action="{% url 'delete-case' case.id %}" method="post">
-      {% csrf_token %}
-      <button class="btn btn btn-outline-danger" type="submit">Delete</button>
-    </form>
+    <div class="case-header">
+      <div class="case-info">
+        <h2 id="case-name"></h2>
+        <p>
+          Case is <span id="case-status" class="h5"></span>
+        </p>
+        <p>
+          Case started on <span id="case-created_at" class="h5"></span>
+        </p>
+        <p id="case-description" class="small"></p>
+      </div>
+      <div class="case-buttons">
+        <form action="{% url 'close-case' case.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-info w-100">Generate Summary</button>
+        </form>
+        {% if case.status != 'Closed' %}
+          <form action="{% url 'close-case' case.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-success w-100">Close Case</button>
+          </form>
+        {% endif %}
+        <form action="{% url 'delete-case' case.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger w-100">Delete Case</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="modal-file-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="section-container">
+        <div class="files">
+          <p class="h5 text-decoration-underline text-center">Case Files</p>
+          <ul class="file-list" id="file-list"></ul>
+        </div>
+        <div class="annotations">
+          <center>
+            <p class="h5 text-decoration-underline">List of all the Annotations</p>
+          </center>
+          <ul id="annotationsList"></ul>
+        </div>
+      </div>
+    </div>
   </div>
+{% endblock %}
+
+{% block jsScripts %}
+  <script src="{% static 'js/case.js' %}"></script>
 {% endblock %}

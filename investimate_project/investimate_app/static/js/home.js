@@ -19,7 +19,7 @@ const createCaseTile = (name, date, status, key) => {
     return div;
 };
 
-const populateRecentCases = async () => {
+const populateRecentCases = (recentCases) => {
     const recentCasesElement = document.getElementById("recent-cases");
     if (recentCases.length === 0) {
         recentCasesElement.innerHTML = `
@@ -44,4 +44,19 @@ const populateRecentCases = async () => {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => populateRecentCases());
+document.addEventListener("DOMContentLoaded", () => {
+    fetch('/api/home/')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const recentCases = JSON.parse(data.recentCases);
+            populateRecentCases(recentCases);
+        })
+        .catch((error) => {
+            console.error("Error fetching case data:", error);
+        });
+});
