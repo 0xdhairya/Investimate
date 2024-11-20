@@ -1,7 +1,18 @@
 {% extends 'investimate_app/layout.html' %}
+{% load static %}
+
 {% block title %}
   All Cases
 {% endblock %}
+
+{% block headReferences %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+{% endblock %}
+
+{% block jsScripts %}
+  <script src="{% static 'js/cases.js' %}"></script>
+{% endblock %}
+
 {% block content %}
   <div class="container-fluid">
     <nav aria-label="breadcrumb">
@@ -13,19 +24,10 @@
       </ol>
     </nav>
     <div class="container">
-      {% if not cases %}
-        <p>No Data</p>
-      {% else %}
-        <div class="row">
-          {% for case in cases %}
-            <div class="card border-dark shadow-lg p-2 col-12 col-sm-6 col-md-3 mx-2 my-4" onclick="location.href='{% url 'case' case.id %}'">
-              <h2>{{ case.name }}</h2>
-              <p class="m-0">Status: {{ case.status }}</p>
-              <p class="m-0">Created at: {{ case.created_at }}</p>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="all-cases" class="allCases"></div>
+      <script>
+        const allCases = JSON.parse('{{ cases|safe }}')
+      </script>
     </div>
   </div>
 {% endblock %}

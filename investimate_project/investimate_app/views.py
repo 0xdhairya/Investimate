@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core.serializers import serialize
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views import View
@@ -89,9 +90,9 @@ def add_case_view(req):
 # Cases List Page
 @login_required
 def cases_view(req):
-    cases = Case.objects.all()
-    return render(req, 'investimate_app/cases.html', {'cases':cases})
-
+    cases = serialize('json', Case.objects.all().order_by('-created_at'))
+    return render(req, 'investimate_app/cases.html', {'cases': cases})
+ 
 # Case Page
 @login_required
 def case_view(req, case_id):
@@ -103,5 +104,5 @@ def case_view(req, case_id):
 def delete_case_view(req, case_id):
     if req.method == 'POST':
         case = Case.objects.get(id=case_id)
-        print('CASE to be deleted', case)
+        case.delete()
         return redirect('home')

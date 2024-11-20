@@ -1,0 +1,44 @@
+.allCases {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    width: 100%;
+    border: 1px solid #ddd;
+    gap: 30px;
+    background-color: transparent;
+    border: none;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+  
+.case-card {
+    width: 350px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #797676;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 2px;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 20px;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.4);
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+}
+  
+.case-card:hover {
+    transform: scale(1.05);
+}
+
+.case-card .h2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
