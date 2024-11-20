@@ -3,24 +3,27 @@
   Login
 {% endblock %}
 {% block content %}
-  <div class="container-fluid">
-    <h2>Login</h2>
-    <form action="{% url 'login' %}" method="POST">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ next }}" />
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required />
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    {% if error %}
-      <p class="red">{{ error }}</p>
-    {% endif %}
-    <p>
-      Register <a href="{% url 'signup' %}">here</a>.
-    </p>
+  <div class="right-half-container">
+    <div class="toggle-container">
+      <button id="login-btn" class="toggle-btn active">Login</button>
+      <button id="signup-btn" class="toggle-btn">Sign Up</button>
+    </div>
+
+    <div id="login-form" class="form-container">
+      <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" required />
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      {% if error %}
+        <p class="red">{{ error }}</p>
+      {% endif %}
+    </div>
   </div>
 {% endblock %}
