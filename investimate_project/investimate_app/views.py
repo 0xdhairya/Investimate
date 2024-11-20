@@ -45,9 +45,9 @@ def logout_view(req):
 # Home Page
 @login_required
 def home_view(req):
-    recentCases = Case.objects.order_by('-created_at')[:3]
     activeCases = Case.objects.filter(status=Case.Status.ACTIVE).count()
     closedCases = Case.objects.filter(status=Case.Status.CLOSED).count()
+    recentCases = serialize('json', Case.objects.all().order_by('-created_at')[:3])
     print('Recent Cases', recentCases)
     return render(req, 'investimate_app/home.html', {'recentCases': recentCases, 'activeCases':activeCases, 'closedCases':closedCases})
 

@@ -19,20 +19,20 @@ const createCaseTile = (name, date, status, key) => {
     return div;
 };
 
-const populateAllCases = async () => {
-    const allCasesElement = document.getElementById("all-cases");
-    if (allCases.length === 0) {
-        allCasesElement.innerHTML = `
+const populateRecentCases = async () => {
+    const recentCasesElement = document.getElementById("recent-cases");
+    if (recentCases.length === 0) {
+        recentCasesElement.innerHTML = `
             <div class="container">
                 <div class="h-100 text-center align-content-center mb-5">
                     <p class="h3">No Cases Yet...</p>
                     <p class="card-subtitle">Create your first case and get started.</p>
                 </div>
             </div>
-        `;
+            `;
     } else {
-        allCases.forEach((caseItem) => {
-            allCasesElement.appendChild(
+        recentCases.forEach((caseItem) => {
+            recentCasesElement.appendChild(
                 createCaseTile(
                     caseItem.fields.name,
                     caseItem.fields.created_at,
@@ -44,4 +44,4 @@ const populateAllCases = async () => {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => populateAllCases());
+document.addEventListener("DOMContentLoaded", () => populateRecentCases());

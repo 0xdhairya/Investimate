@@ -9,10 +9,6 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 {% endblock %}
 
-{% block jsScripts %}
-  <script src="{% static 'js/cases.js' %}"></script>
-{% endblock %}
-
 {% block content %}
   <div class="container-fluid">
     <nav aria-label="breadcrumb">
@@ -25,9 +21,13 @@
     </nav>
     <div class="container">
       <div id="all-cases" class="allCases"></div>
-      <script>
-        const allCases = JSON.parse('{{ cases|safe }}')
-      </script>
     </div>
   </div>
+{% endblock %}
+
+{% block jsScripts %}
+  <script src="{% static 'js/cases.js' %}"></script>
+  <script>
+    const allCases = JSON.parse('{{ cases|safe }}')
+  </script>
 {% endblock %}

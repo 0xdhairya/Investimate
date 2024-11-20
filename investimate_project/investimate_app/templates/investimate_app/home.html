@@ -1,33 +1,24 @@
 {% extends 'investimate_app/layout.html' %}
 {% load static %}
+
 {% block title %}
   Home
 {% endblock %}
+
+{% block headReferences %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+{% endblock %}
+
 {% block content %}
   <div class="container-fluid">
     <h1>Welcome, {{ request.user.username }}</h1>
     <div class="row justify-content-evenly">
-      <div class="col-md-4 card border-dark shadow mt-3 p-3">
+      <div class="col-md-5 recent-cases-container shadow mt-3">
         <h2>Recent Cases</h2>
-        {% if not recentCases %}
-          <div class="h-100 text-center align-content-center mb-5">
-            <p class="h3">No Cases Yet...</p>
-            <p class="card-subtitle">Create your first case and get started.</p>
-          </div>
-        {% else %}
-          <div class="row-cols-1 row justify-content-center">
-            {% for case in recentCases %}
-              <div class="card border-dark shadow mb-3 p-2 col-10" onclick="location.href='{% url 'case' case.id %}'">
-                <h2>{{ case.name }}</h2>
-                <p class="m-0">Status: {{ case.status }}</p>
-                <p class="m-0">Created at: {{ case.created_at }}</p>
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
+        <div id="recent-cases" class="recentCases"></div>
       </div>
       <div class="col-md-6">
-        <div class="row text-center col-sm justify-content-evenly">
+        <div class="row text-center col-md justify-content-evenly">
           <div class="col-sm-5 mt-3 pt-3 card border-dark shadow" onclick="location.href='{% url 'cases' %}'">
             <!-- CITATION: Image source: https://t4.ftcdn.net/jpg/03/36/04/33/360_F_336043300_JzBoRN1kA82edgOQfLNirY6tS8t1E35O.jpg -->
             <img src="{% static 'images/allCases.jpg' %}" alt="All Cases" class="card-img-top w-100 h-75" />
@@ -39,7 +30,7 @@
             <h2>New Case</h2>
           </div>
         </div>
-        <div class="row col-sm justify-content-evenly">
+        <div class="row col-md justify-content-evenly">
           <div class="col-sm-5 mt-3 mt-sm-5 card border-dark shadow p-2">
             <h2>Active Cases: {{ activeCases }}</h2>
           </div>
@@ -50,4 +41,11 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block jsScripts %}
+  <script src="{% static 'js/home.js' %}"></script>
+  <script>
+    const recentCases = JSON.parse('{{ recentCases|safe }}')
+  </script>
 {% endblock %}
