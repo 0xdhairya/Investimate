@@ -6,6 +6,7 @@ from django.core.serializers import serialize
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .forms import CaseForm, UserRegistrationForm
 from .models import Case
@@ -88,8 +89,8 @@ def add_case_view(req):
                         form.add_error('files', f"Cannot accept empty file: {file.name}")
                     else:
                         # Escape single quotes by serializing to JSON and deserializing back
-                        escaped_content = json.dumps(file_content)  # Escape content
-                        file_data[file.name] = json.loads(escaped_content)  # Parse it back for storage
+                        escaped_content = json.dumps(file_content)
+                        file_data[file.name] = {'content': json.loads(escaped_content), 'annotations': {'date': []}}
                 except UnicodeDecodeError:
                     form.add_error('files', f"Unable to decode file: {file.name}. Ensure it is UTF-8 encoded.")
             
@@ -148,3 +149,20 @@ def close_case_view(req, case_id):
             case.status = Case.Status.CLOSED
             case.save()
         return redirect('case', case_id=case.id)
+    
+@csrf_exempt
+def save_highlight_view(req, case_id):
+    if req.method == "POST":
+        try:
+            case = get_object_or_404(Case, id=case_id)
+            data = json.loads(req.body)
+            updated_content = data.get("updatedContent")
+            if updated_content:
+                # Save the updated content persistently
+                case.files = updated_content  # Assuming "files" is a JSONField
+                case.save()
+                return JsonResponse({"message": "Highlight saved successfully."}, status=200)
+            return JsonResponse({"error": "No content to update."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method."}, status=400)
