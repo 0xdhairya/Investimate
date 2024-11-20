@@ -1,0 +1,101 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .case-info {
+    margin-bottom: 20px;
+  }
+  
+  .case-info h2 {
+    font-size: 24px;
+    color: #444;
+  }
+  
+  .case-info p {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .insights h3,
+  .detailed-summary h3,
+  .notes h3 {
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .insights ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    color: #555;
+  }
+  
+  .detailed-summary p {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .detailed-summary {
+    margin-top: 20px;
+  }
+  
+  .notes {
+    margin-top: 20px;
+  }
+  
+  .notes textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: none;
+  }
+  
+  .print-btn {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .print-btn button {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+  }
+  
+  .print-btn button:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  

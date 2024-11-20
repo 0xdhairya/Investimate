@@ -10,6 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .forms import CaseForm, UserRegistrationForm
 from .models import Case
+from django.shortcuts import render
+import google.generativeai as genai
+from django.http import JsonResponse
+
+
 
 def signup_view(req):
     if req.method == 'POST':
@@ -166,3 +171,65 @@ def save_highlight_view(req, case_id):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+@login_required
+def summary_view(request):
+    # Hardcoded case data
+    context = {
+        "case_id": 1,
+        "case_name": "Hardcoded Sample Case",
+        "case_description": "This is a description of the hardcoded case.",
+        "insights": ["Insight 1: Example detail", "Insight 2: Another detail"],
+        "detailed_summary": "This is a detailed summary of the hardcoded case.",
+    }
+    return render(request, "investimate_app/summary.html", context)
+
+
+
+def insights(request):
+    try:
+        # Configure the Generative AI
+        genai.configure(api_key="AIzaSyDZ-saDit_azPEmMhtl43cioFAH63ehZ2s")
+
+        # Generation configuration
+        generation_config = {
+            "temperature": 1,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+            "response_mime_type": "application/json",
+        }
+
+        # Initialize the model
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            generation_config=generation_config,
+        )
+
+        # Generate content
+        response = model.generate_content("""Imagine you're sherlock holmes, with the given text, generate insights for helping in crime solving,
+                                            1.	Money Laundering Connection: Atticus Lincoln, owner of Select Gourmet Foods in Virginia, is potentially involved in money laundering through deposits from foreign accounts in Egypt and the UAE. These deposits were made to his account at First Union National Bank, which has a history of suspicious activity. Erica Hahn, who has deposited checks from this same account, adds another layer of suspicion, suggesting that she may be involved in the same money laundering scheme.
+                                            """)
+
+        # Return as JSON response
+        parsed_data = json.loads(response.text)
+
+        # Extract and format insights
+        insights = parsed_data.get("insights", [])
+        formatted_text = ""
+        for i, insight in enumerate(insights, start=1):
+            if "summary" in insight:
+                formatted_text += f"{i}. {insight['summary']}\n"
+            else:
+                # Fallback to creating a summary from other fields
+                formatted_text += (
+                    f"{i}. {insight.get('suspect', 'Unknown')}: {insight.get('crime', 'Unknown Crime')}. "
+                    f"Evidence: {insight.get('evidence', 'No evidence provided.')}\n"
+                )
+
+        # Return formatted text
+        return JsonResponse({"status": "success", "data": formatted_text})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)

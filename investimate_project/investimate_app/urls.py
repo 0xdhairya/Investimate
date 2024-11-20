@@ -15,4 +15,6 @@ urlpatterns = [
     path('api/cases/', views.cases_api_view, name='cases_api'),
     path('api/home/', views.home_api_view, name='home_api'),
     path('api/case/highlight/<int:case_id>/', views.save_highlight_view, name='save-highlight'),
+    path("cases/1/summary/", views.summary_view, name="case_summary"),
+    path("api/insights/",views.insights, name='insights')
 ]
