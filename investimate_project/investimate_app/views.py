@@ -163,10 +163,9 @@ def save_highlight_view(req, case_id):
             data = json.loads(req.body)
             updated_content = data.get("updatedContent")
             if updated_content:
-                # Save the updated content persistently
-                case.files = updated_content  # Assuming "files" is a JSONField
+                case.files = updated_content
                 case.save()
-                return JsonResponse({"message": "Highlight saved successfully."}, status=200)
+                return JsonResponse({"message": "Annotation saved successfully."}, status=200)
             return JsonResponse({"error": "No content to update."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)

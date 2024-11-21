@@ -68,6 +68,10 @@
   background-color: lightslategray;
 }
 
+.highlight-name, .highlight-location, .highlight-contact-number, .highlight-date, .highlight-miscellaneous {
+  cursor: no-drop;
+}
+
 .ai-buttons {
   display: flex;
   justify-content: space-evenly;
