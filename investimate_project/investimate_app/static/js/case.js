@@ -7,12 +7,12 @@ const populateCaseData = (caseData) => {
 
 const applyHighlights = (annotations) => {
     Object.keys(annotations).forEach((category) => {
-        annotations[category].forEach((highlight) => {
+        annotations[category].forEach((text) => {
             const modalContent = document.getElementById("modal-file-content");
             const innerHTML = modalContent.innerHTML;
             const newHTML = innerHTML.replace(
-                highlight.text,
-                `<span class="highlight-${category}" data-highlight>${highlight.text}</span>`
+                text,
+                `<span class="highlight-${category}" data-highlight>${text}</span>`
             );
             modalContent.innerHTML = newHTML;
         })
@@ -29,7 +29,7 @@ const addHighlightRemovalListeners = (caseData) => {
             const highlightedText = annotation.textContent;
             if (confirm(`Do you want to remove the annotation for "${highlightedText}"?`)) {
                 annotation.replaceWith(document.createTextNode(highlightedText));
-                caseData.fields.files[file].annotations[category] = caseData.fields.files[file].annotations[category].filter((e) => e.text != highlightedText)
+                caseData.fields.files[file].annotations[category] = caseData.fields.files[file].annotations[category].filter((e) => e != highlightedText)
                 saveHighlightToServer(caseData.pk, JSON.stringify(caseData.fields.files));
             }
         });
@@ -81,27 +81,14 @@ function saveHighlightToServer(caseId, updatedContent) {
         });
 }
 
-function saveUpdatedFile(caseData, annotationCategory) {
-    const modalContent = document.getElementById("modal-file-content");
+function saveUpdatedFile(caseData, annotationCategory, text) {
     const fileName = document.getElementById("exampleModalLabel").textContent;
     const files = caseData.fields.files;
-
-    const highlights = [];
-    const textContent = modalContent.textContent; // Extract plain text
-    const spans = modalContent.querySelectorAll('[data-highlight]');
-    spans.forEach((span) => {
-        const start = textContent.indexOf(span.textContent);
-        const end = start + span.textContent.length;
-        highlights.push({ start, end, text: span.textContent });
-    });
-
     if (files[fileName].annotations[annotationCategory]) {
-        files[fileName].annotations[annotationCategory].push(...highlights);
+        files[fileName].annotations[annotationCategory].push(text);
     } else {
-        files[fileName].annotations[annotationCategory] = highlights;
+        files[fileName].annotations[annotationCategory] = [text];
     }
-    console.log('Saving following files data', files);
-
     saveHighlightToServer(caseData.pk, JSON.stringify(files));
 }
 
@@ -123,9 +110,7 @@ const highlightText = (caseData) => {
             `<span class="highlight-${annotationCategory}" data-highlight>${selectedText}</span>`
         );
         modalContent.innerHTML = newHTML;
-
-        saveUpdatedFile(caseData, annotationCategory);
-
+        saveUpdatedFile(caseData, annotationCategory, selectedText);
         addHighlightRemovalListeners(caseData);
     });
 }
@@ -146,8 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const caseData = JSON.parse(data.case)[0];
             const files = JSON.parse(caseData.fields.files);
             caseData.fields.files = files;
-
-            console.log('Case Data', caseData);
             populateCaseData(caseData);
             populateCaseFiles(caseData);
             highlightText(caseData);
