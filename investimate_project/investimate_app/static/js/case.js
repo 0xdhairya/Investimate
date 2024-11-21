@@ -3,6 +3,7 @@ const populateCaseData = (caseData) => {
     document.getElementById('case-status').textContent = caseData.fields.status;
     document.getElementById('case-created_at').textContent = new Date(caseData.fields.created_at).toLocaleString();
     document.getElementById('case-description').textContent = caseData.fields.description;
+    document.getElementById('case-notes').textContent = caseData.fields.notes;
 }
 
 const applyHighlights = (annotations) => {

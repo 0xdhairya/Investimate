@@ -30,7 +30,7 @@
   padding: 20px;
 }
 
-.files, .annotations, .aibox, .insights {
+.files, .notes {
   flex: 1;
   background-color: white;
   border-radius: 5px;
@@ -38,6 +38,17 @@
   margin: 2px;
   height: 50%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notes textarea {
+  width: 100%;
+  height: 80%;
+  border: 1px solid #ccc;
+  resize: none;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 5px;
 }
 
 .file-list, .insight-list {
@@ -77,7 +88,7 @@
   justify-content: space-evenly;
 }
 
-.notes {
+.aibox, .insights {
   background-color: white;
   border-radius: 5px;
   margin-bottom: 20px;
@@ -85,17 +96,6 @@
   height: 100%;
   width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.notes textarea {
-  width: 100%;
-  height: 90%;
-  border: 1px solid #ccc;
-  resize: none;
-  padding: 10px;
-  font-size: 16px;
-  line-height: 1.5;
-  border-radius: 5px;
 }
 
 @media screen and (max-width: 768px) {
@@ -108,7 +108,7 @@
     justify-content: space-between;
     margin-bottom: 5px;
 }
-  .main-container {
+  .main-container, .ai-buttons {
     flex-direction: column;
   }
 }

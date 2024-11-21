@@ -36,17 +36,17 @@
       <div class="case-buttons">
         <form action="{% url 'close-case' case.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="btn btn-outline-info w-100">Generate Summary</button>
+          <button type="submit" class="btn btn-sm btn-outline-info w-100">Generate AI Summary</button>
         </form>
         {% if case.status != 'Closed' %}
           <form action="{% url 'close-case' case.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline-success w-100">Close Case</button>
+            <button type="submit" class="btn btn-sm btn-outline-success w-100">Close Case</button>
           </form>
         {% endif %}
         <form action="{% url 'delete-case' case.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="btn btn-outline-danger w-100">Delete Case</button>
+          <button type="submit" class="btn btn-sm btn-outline-danger w-100">Delete Case</button>
         </form>
       </div>
     </div>
@@ -79,14 +79,12 @@
     <div class="main-container">
       <div class="section-container">
         <div class="files">
-          <p class="h5 text-decoration-underline text-center">Case Files</p>
+          <p class="h5 text-decoration-underline text-center">Files</p>
           <ul class="file-list" id="file-list"></ul>
         </div>
-        <div class="annotations">
-          <center>
-            <p class="h5 text-decoration-underline">Annotations</p>
-          </center>
-          <ul id="annotationsList"></ul>
+        <div class="notes">
+          <p class="h5 text-decoration-underline text-center">Notes</p>
+          <textarea placeholder="Type your notes here..." id="case-notes"></textarea>
         </div>
       </div>
 
@@ -100,7 +98,9 @@
             <button class="btn btn-outline-primary">Save Insight</button>
           </div>
         </div>
+      </div>
 
+      <div class="section-container">
         <div class="insights">
           <p class="h5 text-decoration-underline text-center">Insights</p>
           <ul class="insight-list">
@@ -108,13 +108,6 @@
               <a href="/case/insight.html" class="insight-item">9. Links to Hezbollah and South America: The failed car bomb attack near the American Diplomatic Mission in Buenos Aires, involving Hezbollah operative Jamil Musawi, and the discovery of military-grade explosives in various U.S. locations reveal the global reach of terrorist organizations. This network seems to have a presence in Latin America and links to U.S.-based operatives, with ties extending as far as Afghanistan and Germany.</a>
             </li>
           </ul>
-        </div>
-      </div>
-
-      <div class="section-container">
-        <div class="notes">
-          <p class="h5 text-decoration-underline text-center">Case Notes</p>
-          <textarea placeholder="Type your notes here..."></textarea>
         </div>
       </div>
     </div>
