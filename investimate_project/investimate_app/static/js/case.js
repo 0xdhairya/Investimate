@@ -5,17 +5,43 @@ const populateCaseData = (caseData) => {
     document.getElementById('case-description').textContent = caseData.fields.description;
 }
 
+const applyHighlights = (content, annotations) => {
+    Object.keys(annotations).forEach((category) => {
+        annotations[category].forEach((highlight) => {
+            const modalContent = document.getElementById("modal-file-content");
+            const innerHTML = modalContent.innerHTML;
+            const newHTML = innerHTML.replace(
+                highlight.text,
+                `<span class="highlight-${category}" data-highlight>${highlight.text}</span>`
+            );
+            modalContent.innerHTML = newHTML;
+        })
+    })
+    // // Apply each highlight
+    // highlights.forEach(({ start, end, color }) => {
+    //     const before = highlightedContent.slice(0, start);
+    //     const toHighlight = highlightedContent.slice(start, end);
+    //     const after = highlightedContent.slice(end);
+    //     highlightedContent = `${before}<span class="highlight-${color}" data-highlight>${toHighlight}</span>${after}`;
+    // });
+
+    // modalContent.innerHTML = highlightedContent;
+};
+
 const populateCaseFiles = (caseData) => {
     const fileList = document.getElementById("file-list");
-    const files = JSON.parse(caseData.fields.files);
+    const files = caseData.fields.files;
     Object.keys(files).forEach((file) => {
         const li = document.createElement("li");
         li.innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#fileModal">${file}</button>`;
         fileList.appendChild(li);
-        li.addEventListener("click", (e) => {
-            document.getElementById("modal-file-content").textContent = files[file];
+        li.addEventListener("click", () => {
+            const content = files[file].content;
+            const annotations = files[file].annotations || [];
+            document.getElementById("modal-file-content").textContent = files[file].content;
             document.getElementById("exampleModalLabel").textContent = file;
-            addHighlightRemovalListeners();
+            applyHighlights(content, annotations);
+            addHighlightRemovalListeners(caseData);
         });
     });
 }
@@ -48,30 +74,43 @@ function saveHighlightToServer(caseId, updatedContent) {
         });
 }
 
-function saveUpdatedFile(caseData) {
+function saveUpdatedFile(caseData, annotationCategory) {
     const modalContent = document.getElementById("modal-file-content");
     const fileName = document.getElementById("exampleModalLabel").textContent;
-    const files = JSON.parse(caseData.fields.files);
+    const files = caseData.fields.files;
 
-    files[fileName] = modalContent.innerHTML;
+    const highlights = [];
+    const textContent = modalContent.textContent; // Extract plain text
+    const spans = modalContent.querySelectorAll('[data-highlight]');
+    spans.forEach((span) => {
+        const start = textContent.indexOf(span.textContent);
+        const end = start + span.textContent.length;
+        highlights.push({ start, end, text: span.textContent });
+    });
+
+    if (files[fileName].annotations[annotationCategory]) {
+        files[fileName].annotations[annotationCategory].push(...highlights);
+    } else {
+        files[fileName].annotations[annotationCategory] = highlights;
+    }
+    console.log('Saving following files data', files);
 
     saveHighlightToServer(caseData.pk, JSON.stringify(files));
 }
 
-function addHighlightRemovalListeners(caseData) {
-    const highlights = document.querySelectorAll('[data-highlight]');
-    highlights.forEach((highlight) => {
-        highlight.addEventListener("click", (e) => {
-            e.stopPropagation(); // Prevent triggering other click events
-            const highlightedText = highlight.textContent;
-
-            if (confirm(`Do you want to remove the highlight for "${highlightedText}"?`)) {
-                highlight.replaceWith(document.createTextNode(highlightedText));
-                saveUpdatedFile(caseData);
-            }
-        });
-    });
-}
+// const addHighlightRemovalListeners = (caseData) => {
+//     const highlights = document.querySelectorAll('[data-highlight]');
+//     highlights.forEach((highlight) => {
+//         highlight.addEventListener("click", (e) => {
+//             e.stopPropagation();
+//             const highlightedText = highlight.textContent;
+//             if (confirm(`Do you want to remove the highlight for "${highlightedText}"?`)) {
+//                 highlight.replaceWith(document.createTextNode(highlightedText));
+//                 saveUpdatedFile(caseData);
+//             }
+//         });
+//     });
+// };
 
 const highlightText = (caseData) => {
     const saveHighlightButton = document.getElementById("save-highlight");
@@ -82,17 +121,17 @@ const highlightText = (caseData) => {
             return;
         }
 
-        const selectedColor = document.querySelector('input[name="highlight-color"]:checked').value;
+        const annotationCategory = document.querySelector('input[name="highlight-color"]:checked').value;
         const modalContent = document.getElementById("modal-file-content");
 
         const innerHTML = modalContent.innerHTML;
         const newHTML = innerHTML.replace(
             selectedText,
-            `<span class="highlight-${selectedColor}" data-highlight>${selectedText}</span>`
+            `<span class="highlight-${annotationCategory}" data-highlight>${selectedText}</span>`
         );
         modalContent.innerHTML = newHTML;
 
-        saveUpdatedFile(caseData);
+        saveUpdatedFile(caseData, annotationCategory);
 
         addHighlightRemovalListeners(caseData);
     });
@@ -112,7 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((data) => {
             const caseData = JSON.parse(data.case)[0];
-            console.log(caseData);
+            const files = JSON.parse(caseData.fields.files);
+            caseData.fields.files = files;
+
+            console.log('Case Data', caseData);
             populateCaseData(caseData);
             populateCaseFiles(caseData);
             highlightText(caseData);

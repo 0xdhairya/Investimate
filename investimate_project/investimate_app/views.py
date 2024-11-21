@@ -95,7 +95,7 @@ def add_case_view(req):
                     else:
                         # Escape single quotes by serializing to JSON and deserializing back
                         escaped_content = json.dumps(file_content)
-                        file_data[file.name] = {'content': json.loads(escaped_content), 'annotations': {'date': []}}
+                        file_data[file.name] = {'content': json.loads(escaped_content), 'annotations': {}}
                 except UnicodeDecodeError:
                     form.add_error('files', f"Unable to decode file: {file.name}. Ensure it is UTF-8 encoded.")
             

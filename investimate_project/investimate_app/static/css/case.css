@@ -52,17 +52,20 @@
   height: 75%;
 }
 
-.highlight-yellow {
+.highlight-name {
   background-color: yellow;
 }
-.highlight-lightgreen {
+.highlight-location {
   background-color: lightgreen;
 }
-.highlight-lightpink {
+.highlight-contact-number {
   background-color: lightpink;
 }
-.highlight-lightblue {
+.highlight-date {
   background-color: lightblue;
+}
+.highlight-miscellaneous {
+  background-color: lightslategray;
 }
 
 .ai-buttons {
