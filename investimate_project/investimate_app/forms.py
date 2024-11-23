@@ -62,3 +62,4 @@ class CaseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CaseForm, self).__init__(*args, **kwargs)
         self.fields['notes'].required = False
+        

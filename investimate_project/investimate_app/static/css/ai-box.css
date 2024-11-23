@@ -1,0 +1,25 @@
+.text-dropdown-toggle {
+    color: rgb(0, 98, 255);
+    font-weight: bold;
+    text-decoration-line: underline;
+    display: inline;
+}
+
+.dropdown-menu>p {
+    margin: 0;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+#insight-buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+@media screen and (max-width: 768px) {
+    .insight-buttons {
+        flex-direction: column;
+    }
+}

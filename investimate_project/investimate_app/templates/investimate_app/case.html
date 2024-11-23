@@ -7,6 +7,7 @@
 
 {% block headReferences %}
   <link rel="stylesheet" href="{% static 'css/case.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/ai-box.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -89,15 +90,7 @@
       </div>
 
       <div class="section-container">
-        <div class="aibox">
-          <center>
-            <p class="h5 text-decoration-underline text-center">InvestiMate AI</p>
-          </center>
-          <div class="ai-buttons">
-            <button class="btn btn-outline-primary">Generate Insight</button>
-            <button class="btn btn-outline-primary">Save Insight</button>
-          </div>
-        </div>
+        {% include 'investimate_app/ai-box.html' %}
       </div>
 
       <div class="section-container">
@@ -115,5 +108,6 @@
 {% endblock %}
 
 {% block jsScripts %}
-  <script src="{% static 'js/case.js' %}"></script>
+  <script type="module" src="{% static 'js/case.js' %}"></script>
+  <script type="module" src="{% static 'js/ai-box.js' %}"></script>
 {% endblock %}
