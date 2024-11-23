@@ -173,7 +173,7 @@ def save_highlight_view(req, case_id):
 
 
 @login_required
-def summary_view(request):
+def summary_view(req):
     # Hardcoded case data
     context = {
         "case_id": 1,
@@ -182,9 +182,11 @@ def summary_view(request):
         "insights": ["Insight 1: Example detail", "Insight 2: Another detail"],
         "detailed_summary": "This is a detailed summary of the hardcoded case.",
     }
-    return render(request, "investimate_app/summary.html", context)
+    return render(req, "investimate_app/summary.html", context)
 
-
+def connection_api_view(req, case_id):
+    print('Req', req)
+    
 
 def insights(request):
     try:

@@ -1,3 +1,9 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 .allCases {
     display: flex;
     flex-wrap: wrap;
@@ -25,7 +31,7 @@
     margin-bottom: 20px;
     padding: 15px;
 }
-  
+
 .case-card {
     width: 300px;
     background-color: #f9f9f9;
@@ -46,7 +52,7 @@
     -ms-border-radius: 15px;
     -o-border-radius: 15px;
 }
-  
+
 .case-card:hover {
     transform: scale(1.05);
 }

@@ -1,9 +1,48 @@
+import { setAiAction, fillEntityList } from './ai-box.js'
+
+let annotations = {
+    'date': [],
+    'name': [],
+    'location': [],
+    'contact-number': [],
+    'miscellaneous': [],
+};
+let minTwoEntities = false;
+
+const checkForMinTwoEntities = () => {
+    let len = 0;
+    Object.keys(annotations).forEach((cat) => {
+        len += annotations[cat].length;
+    })
+    minTwoEntities = len > 1 ? true : false;
+    fillEntityList(annotations, minTwoEntities);
+}
+
+const populateAnnotations = (files) => {
+    annotations = {
+        'date': [],
+        'name': [],
+        'location': [],
+        'contact-number': [],
+        'miscellaneous': [],
+    };
+    Object.keys(files).forEach((file) => {
+        Object.keys(files[file].annotations).forEach((category) => {
+            files[file].annotations[category].forEach((ann) => {
+                annotations[category].push({ text: ann, file })
+            })
+        });
+    });
+    checkForMinTwoEntities();
+}
+
 const populateCaseData = (caseData) => {
     document.getElementById('case-name').textContent = caseData.fields.name;
     document.getElementById('case-status').textContent = caseData.fields.status;
     document.getElementById('case-created_at').textContent = new Date(caseData.fields.created_at).toLocaleString();
     document.getElementById('case-description').textContent = caseData.fields.description;
     document.getElementById('case-notes').textContent = caseData.fields.notes;
+    populateAnnotations(caseData.fields.files);
 }
 
 const applyHighlights = (annotations) => {
@@ -31,7 +70,7 @@ const addHighlightRemovalListeners = (caseData) => {
             if (confirm(`Do you want to remove the annotation for "${highlightedText}"?`)) {
                 annotation.replaceWith(document.createTextNode(highlightedText));
                 caseData.fields.files[file].annotations[category] = caseData.fields.files[file].annotations[category].filter((e) => e != highlightedText)
-                saveHighlightToServer(caseData.pk, JSON.stringify(caseData.fields.files));
+                saveHighlightToServer(caseData.pk, caseData.fields.files);
             }
         });
     });
@@ -65,7 +104,7 @@ function saveHighlightToServer(caseId, updatedContent) {
             "Content-Type": "application/json",
             "X-CSRFToken": getCSRFToken(),
         },
-        body: JSON.stringify({ updatedContent }),
+        body: JSON.stringify({ updatedContent: JSON.stringify(updatedContent) }),
     })
         .then((response) => {
             if (!response.ok) {
@@ -73,8 +112,8 @@ function saveHighlightToServer(caseId, updatedContent) {
             }
             return response.json();
         })
-        .then((data) => {
-            alert(data.message || "Changes saved successfully.");
+        .then(() => {
+            populateAnnotations(updatedContent);
         })
         .catch((error) => {
             console.error("Error saving changes:", error);
@@ -90,7 +129,7 @@ function saveUpdatedFile(caseData, annotationCategory, text) {
     } else {
         files[fileName].annotations[annotationCategory] = [text];
     }
-    saveHighlightToServer(caseData.pk, JSON.stringify(files));
+    saveHighlightToServer(caseData.pk, files);
 }
 
 const highlightText = (caseData) => {
@@ -135,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             populateCaseData(caseData);
             populateCaseFiles(caseData);
             highlightText(caseData);
+            setAiAction();
         })
         .catch((error) => {
             console.error("Error fetching case data:", error);

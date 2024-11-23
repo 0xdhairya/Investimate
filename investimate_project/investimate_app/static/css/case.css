@@ -83,11 +83,6 @@
   cursor: no-drop;
 }
 
-.ai-buttons {
-  display: flex;
-  justify-content: space-evenly;
-}
-
 .aibox, .insights {
   background-color: white;
   border-radius: 5px;
@@ -108,7 +103,7 @@
     justify-content: space-between;
     margin-bottom: 5px;
 }
-  .main-container, .ai-buttons {
+  .main-container {
     flex-direction: column;
   }
 }
