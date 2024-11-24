@@ -64,7 +64,7 @@ const applyHighlights = (annotations) => {
 const addHighlightRemovalListeners = (caseData) => {
     const annotations = document.querySelectorAll('[data-highlight]');
     annotations.forEach((annotation) => {
-        const category = annotation.getAttribute('class').split('-')[1];
+        const category = annotation.getAttribute('class').split('highlight-')[1];
         const file = document.getElementById("exampleModalLabel").textContent;
         annotation.addEventListener("click", (e) => {
             e.stopPropagation();
