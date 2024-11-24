@@ -42,9 +42,6 @@ const removeEntity = (annotations, removedEntityNumber) => {
             delete entities[`entity-${removedEntityNumber}`];
         }
     });
-    console.log('Entities', entities);
-    console.log('annot', annotations);
-
 
     const remainingEntities = Array.from(entityListElement.children);
     remainingEntities.forEach((child, index) => {
@@ -78,10 +75,7 @@ const removeEntity = (annotations, removedEntityNumber) => {
 
 };
 
-
 const entityItem = (annotations, i, hidden = false) => {
-    console.log('Here');
-
     const div = document.createElement("div");
     div.classList.add("p-1");
     div.id = `entity-${i}`;
@@ -186,15 +180,20 @@ const entityItem = (annotations, i, hidden = false) => {
     return div;
 };
 
-const addEntityItem = (annotations) => {
+const addEntityItem = (annotations, totalEntities) => {
     document.getElementById('addEntityButton').addEventListener('click', () => {
+        if (totalEntities <= entitiesCount) {
+            alert('No more entities available to add');
+            return;
+        }
         const entityListElement = document.getElementById('entity-list');
         entitiesCount += 1;
         entityListElement.appendChild(entityItem(annotations, entitiesCount));
     });
 }
 
-export const fillEntityList = (annotations, minTwoEntities) => {
+export const fillEntityList = (annotations, minTwoEntities, totalEntities) => {
+    console.log('Here', minTwoEntities, totalEntities);
     if (!minTwoEntities) {
         document.getElementById('no-entities').hidden = false;
         document.getElementById('contain-entities').hidden = true;
@@ -211,5 +210,74 @@ export const fillEntityList = (annotations, minTwoEntities) => {
     entityListElement.appendChild(entityItem(ann, 1, true));
     entitiesCount += 1;
     entityListElement.appendChild(entityItem(ann, 2, true));
-    addEntityItem(ann);
+    addEntityItem(ann, totalEntities);
+}
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+const aiMakeConnection = (case_id) => {
+    console.log('Sending connection');
+
+    const entityListElement = document.getElementById("entity-list");
+    console.log('Child', entityListElement.children)
+    entityListElement.children.forEach((c) => console.log('Child', c))
+
+    fetch(`/api/cases/${case_id}/ai/connection`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(),
+        },
+        body: JSON.stringify(entities),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // Handle the response from Django
+            console.log("Response from server:", data);
+        })
+        .catch((error) => {
+            console.error("Error sending data:", error);
+        });
+}
+
+const aiMakePrediction = (case_id) => {
+    const predictionTest = document.getElementById('aiPredictionText')?.value;
+    const errorMessageElement = document.getElementById('aiPredictionTextError');
+    if (predictionTest && predictionTest != '') {
+        errorMessageElement.innerText = '';
+        const body = {
+            data: predictionTest,
+        };
+        fetch(`/api/cases/${case_id}/ai/prediction`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify(body),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response from server:", data);
+        }).catch((error) => {
+            console.error("Error sending data:", error);
+        });
+        return;
+    }
+    if (predictionTest == '') errorMessageElement.innerText = 'Please enter some event to predict';
+}
+
+export const aiActionsApis = (case_id) => {
+    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(case_id));
+    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(case_id));
 }

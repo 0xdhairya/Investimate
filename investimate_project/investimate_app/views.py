@@ -155,7 +155,7 @@ def close_case_view(req, case_id):
             case.save()
         return redirect('case', case_id=case.id)
     
-@csrf_exempt
+@login_required
 def save_highlight_view(req, case_id):
     if req.method == "POST":
         try:
@@ -184,8 +184,33 @@ def summary_view(req):
     }
     return render(req, "investimate_app/summary.html", context)
 
+@login_required
 def connection_api_view(req, case_id):
-    print('Req', req)
+    if req.method == "POST":
+        try:
+            data = json.loads(req.body)  # Parse JSON data
+            # Process the data (example: print the entities)
+            print("Received data:", data)
+            
+            # Return a JSON response
+            return JsonResponse({"message": "Connection made successfully!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+    
+@login_required
+def prediction_api_view(req, case_id):
+    if req.method == "POST":
+        try:
+            data = json.loads(req.body)  # Parse JSON data
+            # Process the data (example: print the entities)
+            print("Received data:", data)
+            
+            # Return a JSON response
+            return JsonResponse({"message": "Prediction made successfully!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
     
 
 def insights(request):

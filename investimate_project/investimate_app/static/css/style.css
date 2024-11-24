@@ -72,3 +72,8 @@
     font-size: 0.9rem;
     line-height: 1.4;
 }
+
+.error-text {
+    color: red;
+    font-size: small;
+}

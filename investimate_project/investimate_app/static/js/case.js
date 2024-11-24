@@ -1,4 +1,4 @@
-import { setAiAction, fillEntityList } from './ai-box.js'
+import { setAiAction, fillEntityList, aiActionsApis } from './ai-box.js'
 
 let annotations = {
     'date': [],
@@ -8,14 +8,15 @@ let annotations = {
     'miscellaneous': [],
 };
 let minTwoEntities = false;
+let totalEntities = 0;
 
 const checkForMinTwoEntities = () => {
-    let len = 0;
+    totalEntities = 0;
     Object.keys(annotations).forEach((cat) => {
-        len += annotations[cat].length;
+        totalEntities += annotations[cat].length;
     })
-    minTwoEntities = len > 1 ? true : false;
-    fillEntityList(annotations, minTwoEntities);
+    minTwoEntities = totalEntities > 1 ? true : false;
+    fillEntityList(annotations, minTwoEntities, totalEntities);
 }
 
 const populateAnnotations = (files) => {
@@ -43,6 +44,7 @@ const populateCaseData = (caseData) => {
     document.getElementById('case-description').textContent = caseData.fields.description;
     document.getElementById('case-notes').textContent = caseData.fields.notes;
     populateAnnotations(caseData.fields.files);
+    aiActionsApis(caseData.pk);
 }
 
 const applyHighlights = (annotations) => {
