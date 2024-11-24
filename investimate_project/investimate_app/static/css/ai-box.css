@@ -19,7 +19,7 @@
 }
 
 #entity-list {
-    max-height: 300px;
+    max-height: 30vh;
     overflow: auto;
 }
 

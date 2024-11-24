@@ -5,10 +5,6 @@
   Home
 {% endblock %}
 
-{% block headReferences %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-{% endblock %}
-
 {% block content %}
   <div class="container-fluid">
     <h1>Welcome, {{ request.user.username }}</h1>

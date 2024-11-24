@@ -10,6 +10,75 @@ let annotations = {
 let minTwoEntities = false;
 let totalEntities = 0;
 
+const notesSection = (caseData) => {
+    const caseNotes = document.getElementById('case-notes');
+    caseNotes.textContent = caseData.fields.notes;
+    const editButton = document.getElementById('notesEditButton');
+    const saveButton = document.getElementById('notesSaveButton');
+    const cancelButton = document.getElementById('notesCancelButton');
+    const notesError = document.getElementById('notesError');
+    editButton.addEventListener('click', () => {
+        editButton.hidden = true;
+        caseNotes.disabled = false;
+        saveButton.hidden = false;
+        cancelButton.hidden = false;
+    });
+
+    cancelButton.addEventListener('click', () => {
+        editButton.hidden = false;
+        caseNotes.disabled = true;
+        saveButton.hidden = true;
+        cancelButton.hidden = true;
+        caseNotes.textContent = caseData.fields.notes;
+    });
+
+    saveButton.addEventListener('click', () => {
+        editButton.hidden = false;
+        caseNotes.disabled = true;
+        saveButton.hidden = true;
+        cancelButton.hidden = true;
+
+        const notes = caseNotes.value;
+        fetch(`/api/case/${caseData.pk}/update-notes`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ updatedContent: notes }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert('Case Notes Updated')
+            })
+            .catch((error) => {
+                console.error("Error fetching case data:", error);
+                caseNotes.textContent = caseData.fields.notes;
+            });
+    });
+}
+
+export const insightsSection = (case_id, insights) => {
+    const insightElement = document.getElementById('insight-list');
+    insightElement.innerHTML = ''
+    insights.forEach((insight, i) => {
+        const insightItem = document.createElement('div');
+        insightItem.classList.add('insight-item');
+        if (insight.category == 'Prediction') {
+            insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.text}`;
+        }
+        insightItem.addEventListener("click", () => {
+            window.location.href = `/case/${case_id}/insight/${insight.id}`;
+        });
+        insightElement.appendChild(insightItem);
+    })
+}
+
 const checkForMinTwoEntities = () => {
     totalEntities = 0;
     Object.keys(annotations).forEach((cat) => {
@@ -42,9 +111,10 @@ const populateCaseData = (caseData) => {
     document.getElementById('case-status').textContent = caseData.fields.status;
     document.getElementById('case-created_at').textContent = new Date(caseData.fields.created_at).toLocaleString();
     document.getElementById('case-description').textContent = caseData.fields.description;
-    notesSection(caseData);
     populateAnnotations(caseData.fields.files);
-    aiActionsApis(caseData.pk);
+    aiActionsApis(caseData);
+    notesSection(caseData);
+    insightsSection(caseData.pk, caseData.fields.insights);
 }
 
 const applyHighlights = (annotations) => {
@@ -154,59 +224,6 @@ const highlightText = (caseData) => {
         modalContent.innerHTML = newHTML;
         saveUpdatedFile(caseData, annotationCategory, selectedText);
         addHighlightRemovalListeners(caseData);
-    });
-}
-
-const notesSection = (caseData) => {
-    const caseNotes = document.getElementById('case-notes');
-    caseNotes.textContent = caseData.fields.notes;
-    const editButton = document.getElementById('notesEditButton');
-    const saveButton = document.getElementById('notesSaveButton');
-    const cancelButton = document.getElementById('notesCancelButton');
-    const notesError = document.getElementById('notesError');
-    editButton.addEventListener('click', () => {
-        editButton.hidden = true;
-        caseNotes.disabled = false;
-        saveButton.hidden = false;
-        cancelButton.hidden = false;
-    });
-
-    cancelButton.addEventListener('click', () => {
-        editButton.hidden = false;
-        caseNotes.disabled = true;
-        saveButton.hidden = true;
-        cancelButton.hidden = true;
-        caseNotes.textContent = caseData.fields.notes;
-    });
-
-    saveButton.addEventListener('click', () => {
-        editButton.hidden = false;
-        caseNotes.disabled = true;
-        saveButton.hidden = true;
-        cancelButton.hidden = true;
-
-        const notes = caseNotes.value;
-        fetch(`/api/case/${caseData.pk}/update-notes`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify({ updatedContent: notes }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                alert('Case Notes Updated')
-            })
-            .catch((error) => {
-                console.error("Error fetching case data:", error);
-                caseNotes.textContent = caseData.fields.notes;
-            });
     });
 }
 

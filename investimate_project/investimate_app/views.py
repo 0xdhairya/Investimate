@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.views import View
+from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .forms import CaseForm, UserRegistrationForm
@@ -101,7 +101,6 @@ def add_case_view(req):
             
             if not form.errors:
                 case.files = json.dumps(file_data)  # Store as a JSON string
-                case.insights = []
                 case.save()
                 return redirect(reverse('case', args=[case.id]))
 
@@ -204,9 +203,21 @@ def prediction_api_view(req, case_id):
         try:
             data = json.loads(req.body)
             print("Received data:", data)
-            
-            # Return a JSON response
-            return JsonResponse({"message": "Prediction made successfully!"})
+            case = get_object_or_404(Case, id=case_id)
+            new_insight = {
+                "id": len(case.insights) + 1,  # Assign a new ID based on the length of insights
+                "generated_at": now().isoformat(),
+                "category": 'Prediction',
+                "input": {
+                    "text": data['predictionText'],
+                },
+                "output":{
+                    "text": "akjsndfkjasfnjas",
+                }
+            }
+            case.insights.append(new_insight)
+            case.save()
+            return JsonResponse({"message": "Prediction made successfully!", "insights":case.insights})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -223,6 +234,18 @@ def update_notes_api_view(req, case_id):
                 case.notes = updated_content
                 case.save()
                 return JsonResponse({"message": "Notes successfully updated!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+@login_required
+def remove_insight_api_view(req, case_id, id):
+    print(case_id, id)
+    if req.method == "POST":
+        try:
+            case = get_object_or_404(Case, id=case_id)
+            print("Received data:", case)
+            return JsonResponse({"message": "Insight successfully deleted!"})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)

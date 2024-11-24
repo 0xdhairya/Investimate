@@ -2,20 +2,11 @@
 {% load static %}
 
 {% block title %}
-Summary
-
-{% endblock %}
-
-{% block headReferences %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  Summary
 {% endblock %}
 
 {% block content %}
-
-<body>
-
-
-  <main>
+  <div>
     <div class="breadcrumb">
       <a href="{% url 'home' %}">Home</a>
       <span>/</span>
@@ -51,9 +42,9 @@ Summary
         <button onclick="printReport()">Print Report</button>
       </div>
     </div>
-  </main>
-  {% endblock %}
+  </div>
+{% endblock %}
 
-  {% block jsScripts %}
+{% block jsScripts %}
   <script src="{% static 'js/summary.js' %}"></script>
-  {% endblock %}
+{% endblock %}

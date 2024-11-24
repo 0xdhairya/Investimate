@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block headReferences %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <link rel="stylesheet" href="{% static 'css/case.css' %}" />
   <link rel="stylesheet" href="{% static 'css/ai-box.css' %}" />
 {% endblock %}
@@ -105,11 +104,7 @@
       <div class="section-container">
         <div class="insights">
           <p class="h5 text-decoration-underline text-center">Insights</p>
-          <ul class="insight-list">
-            <li>
-              <a href="/case/insight.html" class="insight-item">9. Links to Hezbollah and South America: The failed car bomb attack near the American Diplomatic Mission in Buenos Aires, involving Hezbollah operative Jamil Musawi, and the discovery of military-grade explosives in various U.S. locations reveal the global reach of terrorist organizations. This network seems to have a presence in Latin America and links to U.S.-based operatives, with ties extending as far as Afghanistan and Germany.</a>
-            </li>
-          </ul>
+          <div class="insight-list" id="insight-list"></div>
         </div>
       </div>
     </div>

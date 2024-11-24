@@ -1,3 +1,5 @@
+import { insightsSection } from './case.js';
+
 const entities = {};
 let entitiesCount = 0;
 
@@ -260,15 +262,15 @@ const aiMakeConnection = (case_id) => {
         });
 }
 
-const aiMakePrediction = (case_id) => {
-    const predictionTest = document.getElementById('aiPredictionText')?.value;
+const aiMakePrediction = (caseData) => {
+    const predictionText = document.getElementById('aiPredictionText')?.value;
     const errorMessageElement = document.getElementById('aiPredictionTextError');
-    if (predictionTest && predictionTest != '') {
+    if (predictionText && predictionText != '') {
         errorMessageElement.innerText = '';
         const body = {
-            data: predictionTest,
+            predictionText,
         };
-        fetch(`/api/case/${case_id}/ai/prediction`, {
+        fetch(`/api/case/${caseData.pk}/ai/prediction`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -282,15 +284,16 @@ const aiMakePrediction = (case_id) => {
             return response.json();
         }).then((data) => {
             console.log("Response from server:", data);
+            insightsSection(caseData.pk, data.insights);
         }).catch((error) => {
             console.error("Error sending data:", error);
         });
         return;
     }
-    if (predictionTest == '') errorMessageElement.innerText = 'Please enter some event to predict';
+    if (predictionText == '') errorMessageElement.innerText = 'Please enter some event to predict';
 }
 
-export const aiActionsApis = (case_id) => {
-    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(case_id));
-    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(case_id));
+export const aiActionsApis = (caseData) => {
+    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData));
+    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData));
 }

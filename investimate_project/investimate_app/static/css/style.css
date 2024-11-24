@@ -4,6 +4,24 @@
     padding: 0;
 }
 
+main {
+    margin-top: 10px;
+    padding: 5px 0;
+    height: 100%;
+}
+
+.errorlist {
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.card-image {
+    width: 80%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
 .allCases {
     display: flex;
     flex-wrap: wrap;

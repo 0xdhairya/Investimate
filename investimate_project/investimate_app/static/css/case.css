@@ -4,37 +4,36 @@
   justify-content: space-between;
 }
 
-.case-info > * {
+.case-info>* {
   margin: 0;
 }
 
 .case-buttons {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 5px;
   flex-direction: column;
 }
 
 .main-container {
   display: flex;
   flex-wrap: wrap;
-  margin: 10px;
-  padding: 10px;
-  gap: 10px;
+  padding: 0 10px;
+  height: 60vh;
 }
 
 .section-container {
   flex: 1;
   border-radius: 5px;
-  padding: 20px;
+  padding: 10px;
 }
 
-.files, .notes {
+.files,
+.notes {
   flex: 1;
   background-color: white;
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
   margin: 2px;
   height: 50%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -51,9 +50,8 @@
   border-radius: 5px;
 }
 
-.file-list, .insight-list {
+.file-list {
   overflow: auto;
-  margin: 10px;
   padding: 15px;
   list-style: none;
   font-size: 0.9rem;
@@ -63,31 +61,59 @@
   height: 75%;
 }
 
+.insight-list {
+  overflow-y: auto;
+  font-size: 0.9rem;
+  gap: 15px;
+  max-height: 50vh;
+}
+
+.insight-item {
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.5;
+  padding: 3px;
+}
+
+.insight-item:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
 .highlight-name {
   background-color: yellow;
 }
+
 .highlight-location {
   background-color: lightgreen;
 }
+
 .highlight-contact-number {
   background-color: lightpink;
 }
+
 .highlight-date {
   background-color: lightblue;
 }
+
 .highlight-miscellaneous {
   background-color: lightslategray;
 }
 
-.highlight-name, .highlight-location, .highlight-contact-number, .highlight-date, .highlight-miscellaneous {
+.highlight-name,
+.highlight-location,
+.highlight-contact-number,
+.highlight-date,
+.highlight-miscellaneous {
   cursor: no-drop;
 }
 
-.aibox, .insights {
+.aibox,
+.insights {
   background-color: white;
   border-radius: 5px;
-  margin-bottom: 20px;
-  padding: 20px;
+  padding: 10px 20px;
   height: 100%;
   width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -97,14 +123,15 @@
   .case-header {
     flex-direction: column-reverse;
     align-items: normal;
-}
+  }
+
   .case-buttons {
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 5px;
-}
+    margin: 5px 0;
+  }
+
   .main-container {
     flex-direction: column;
   }
 }
-  
