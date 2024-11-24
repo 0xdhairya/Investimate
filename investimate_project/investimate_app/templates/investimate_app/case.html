@@ -85,8 +85,16 @@
           <ul class="file-list" id="file-list"></ul>
         </div>
         <div class="notes">
-          <p class="h5 text-decoration-underline text-center">Notes</p>
-          <textarea placeholder="Type your notes here..." id="case-notes"></textarea>
+          <div class="d-flex mb-1 align-items-center justify-content-between">
+            <p class="h5 text-decoration-underline text-center">Notes</p>
+            <div>
+              <button class="btn btn-sm btn-outline-secondary" id="notesEditButton">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" id="notesCancelButton" hidden>Cancel</button>
+              <button class="btn btn-sm btn-outline-success" id="notesSaveButton" hidden>Save</button>
+            </div>
+          </div>
+          <textarea placeholder="Type your notes here..." id="case-notes" disabled></textarea>
+          <p class="error-text" id="notesError"></p>
         </div>
       </div>
 

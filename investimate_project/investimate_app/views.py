@@ -188,8 +188,7 @@ def summary_view(req):
 def connection_api_view(req, case_id):
     if req.method == "POST":
         try:
-            data = json.loads(req.body)  # Parse JSON data
-            # Process the data (example: print the entities)
+            data = json.loads(req.body)
             print("Received data:", data)
             
             # Return a JSON response
@@ -202,8 +201,7 @@ def connection_api_view(req, case_id):
 def prediction_api_view(req, case_id):
     if req.method == "POST":
         try:
-            data = json.loads(req.body)  # Parse JSON data
-            # Process the data (example: print the entities)
+            data = json.loads(req.body)
             print("Received data:", data)
             
             # Return a JSON response
@@ -211,7 +209,22 @@ def prediction_api_view(req, case_id):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
-    
+
+@login_required
+def update_notes_api_view(req, case_id):
+    if req.method == "POST":
+        try:
+            case = get_object_or_404(Case, id=case_id)
+            data = json.loads(req.body)
+            print("Received data:", data)
+            updated_content = data.get("updatedContent")
+            if updated_content:
+                case.notes = updated_content
+                case.save()
+                return JsonResponse({"message": "Notes successfully updated!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def insights(request):
     try:

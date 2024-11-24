@@ -42,7 +42,7 @@ const populateCaseData = (caseData) => {
     document.getElementById('case-status').textContent = caseData.fields.status;
     document.getElementById('case-created_at').textContent = new Date(caseData.fields.created_at).toLocaleString();
     document.getElementById('case-description').textContent = caseData.fields.description;
-    document.getElementById('case-notes').textContent = caseData.fields.notes;
+    notesSection(caseData);
     populateAnnotations(caseData.fields.files);
     aiActionsApis(caseData.pk);
 }
@@ -157,6 +157,59 @@ const highlightText = (caseData) => {
     });
 }
 
+const notesSection = (caseData) => {
+    const caseNotes = document.getElementById('case-notes');
+    caseNotes.textContent = caseData.fields.notes;
+    const editButton = document.getElementById('notesEditButton');
+    const saveButton = document.getElementById('notesSaveButton');
+    const cancelButton = document.getElementById('notesCancelButton');
+    const notesError = document.getElementById('notesError');
+    editButton.addEventListener('click', () => {
+        editButton.hidden = true;
+        caseNotes.disabled = false;
+        saveButton.hidden = false;
+        cancelButton.hidden = false;
+    });
+
+    cancelButton.addEventListener('click', () => {
+        editButton.hidden = false;
+        caseNotes.disabled = true;
+        saveButton.hidden = true;
+        cancelButton.hidden = true;
+        caseNotes.textContent = caseData.fields.notes;
+    });
+
+    saveButton.addEventListener('click', () => {
+        editButton.hidden = false;
+        caseNotes.disabled = true;
+        saveButton.hidden = true;
+        cancelButton.hidden = true;
+
+        const notes = caseNotes.value;
+        fetch(`/api/case/${caseData.pk}/update-notes`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ updatedContent: notes }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert('Case Notes Updated')
+            })
+            .catch((error) => {
+                console.error("Error fetching case data:", error);
+                caseNotes.textContent = caseData.fields.notes;
+            });
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const path = window.location.pathname;
     const pathSegments = path.split('/');
@@ -171,6 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((data) => {
             const caseData = JSON.parse(data.case)[0];
+            console.log('CASE', caseData);
+
             const files = JSON.parse(caseData.fields.files);
             caseData.fields.files = files;
             populateCaseData(caseData);

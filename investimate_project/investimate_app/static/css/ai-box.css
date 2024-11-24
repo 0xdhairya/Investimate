@@ -23,6 +23,10 @@
     overflow: auto;
 }
 
+.red-border {
+    border: 2px solid red;
+}
+
 @media screen and (max-width: 768px) {
     .insight-buttons {
         flex-direction: column;

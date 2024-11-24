@@ -78,6 +78,7 @@ const removeEntity = (annotations, removedEntityNumber) => {
 const entityItem = (annotations, i, hidden = false) => {
     const div = document.createElement("div");
     div.classList.add("p-1");
+    div.classList.add("m-1");
     div.id = `entity-${i}`;
     div.innerHTML = `
     <div class="d-flex justify-content-between align-items-center">
@@ -218,13 +219,25 @@ function getCSRFToken() {
 }
 
 const aiMakeConnection = (case_id) => {
-    console.log('Sending connection');
+    const entityList = document.getElementById("entity-list");
+    const entities = Array.from(entityList.children);
+    let errors = 0;
 
-    const entityListElement = document.getElementById("entity-list");
-    console.log('Child', entityListElement.children)
-    entityListElement.children.forEach((c) => console.log('Child', c))
+    entities.forEach((entity, i) => {
+        const categoryDropdown = entity.querySelector(`#entity-${i + 1}-category`);
+        const valueDropdown = entity.querySelector(`#entity-${i + 1}-value`);
 
-    fetch(`/api/cases/${case_id}/ai/connection`, {
+        if (!categoryDropdown || categoryDropdown.value == 'Select Category' || !valueDropdown || valueDropdown.value == 'Select Category First' || valueDropdown.value == 'Select Entity') {
+            entity.classList.add('red-border');
+            errors += 1;
+        } else {
+            entity.classList.remove('red-border');
+        }
+    })
+
+    if (errors != 0) return;
+
+    fetch(`/api/case/${case_id}/ai/connection`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -255,7 +268,7 @@ const aiMakePrediction = (case_id) => {
         const body = {
             data: predictionTest,
         };
-        fetch(`/api/cases/${case_id}/ai/prediction`, {
+        fetch(`/api/case/${case_id}/ai/prediction`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
