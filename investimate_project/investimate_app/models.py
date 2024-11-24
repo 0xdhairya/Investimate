@@ -16,6 +16,7 @@ class Case(models.Model):
         default=Status.ACTIVE,
     )
     files = models.JSONField()
+    insights = models.JSONField()
 
     def __str__(self):
         return self.name

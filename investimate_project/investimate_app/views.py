@@ -101,6 +101,7 @@ def add_case_view(req):
             
             if not form.errors:
                 case.files = json.dumps(file_data)  # Store as a JSON string
+                case.insights = []
                 case.save()
                 return redirect(reverse('case', args=[case.id]))
 
