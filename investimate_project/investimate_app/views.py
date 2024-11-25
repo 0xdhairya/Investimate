@@ -1,12 +1,11 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .forms import CaseForm, UserRegistrationForm
 from .models import Case
@@ -185,6 +184,44 @@ def summary_view(req):
     return render(req, "investimate_app/summary.html", context)
 
 @login_required
+def insight_view(req, case_id,insight_id):
+    case = get_object_or_404(Case, id=case_id)
+    insight = next((insight for insight in case.insights if insight["id"] == insight_id), None)
+    if not insight:
+        return render(req, "404.html", {"error_message": "Insight not found."}, status=404)
+    context = {
+        "case": {
+            "id": case.pk,
+            "name": case.name,
+            "description": case.description,
+        },
+        "insight": {
+            "id": insight_id,
+            "category": insight['category'],
+        }
+    }
+    return render(req, "investimate_app/insight.html", context )
+
+# Case Data API
+@login_required
+def insight_api_view(req, case_id, insight_id):
+    case = get_object_or_404(Case, id=case_id)
+    case_data = serialize('json', [case])
+    return JsonResponse({'case': case_data})
+
+@login_required
+def remove_insight_view(req, case_id, id):
+    print(case_id, id)
+    if req.method == "POST":
+        case = get_object_or_404(Case, id=case_id)
+        insight_index = next((index for index, insight in enumerate(case.insights) if insight["id"] == id), None)
+        if insight_index is None:
+            return render(req, "404.html", {"error_message": "Insight not found."}, status=404)
+        del case.insights[insight_index]
+        case.save()
+        return redirect("case", case_id=case_id)
+    
+@login_required
 def connection_api_view(req, case_id):
     if req.method == "POST":
         try:
@@ -205,7 +242,7 @@ def prediction_api_view(req, case_id):
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
             new_insight = {
-                "id": len(case.insights) + 1,  # Assign a new ID based on the length of insights
+                "id": max([insight["id"] for insight in case.insights], default=0) + 1,  # Assign a new ID based on the length of insights
                 "generated_at": now().isoformat(),
                 "category": 'Prediction',
                 "input": {
@@ -234,18 +271,6 @@ def update_notes_api_view(req, case_id):
                 case.notes = updated_content
                 case.save()
                 return JsonResponse({"message": "Notes successfully updated!"})
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data"}, status=400)
-    return JsonResponse({"error": "Invalid request method"}, status=405)
-
-@login_required
-def remove_insight_api_view(req, case_id, id):
-    print(case_id, id)
-    if req.method == "POST":
-        try:
-            case = get_object_or_404(Case, id=case_id)
-            print("Received data:", case)
-            return JsonResponse({"message": "Insight successfully deleted!"})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
