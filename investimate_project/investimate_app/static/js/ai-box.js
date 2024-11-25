@@ -220,7 +220,7 @@ function getCSRFToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
 }
 
-const aiMakeConnection = (case_id) => {
+const aiMakeConnection = (caseData) => {
     const entityList = document.getElementById("entity-list");
     const entities = Array.from(entityList.children);
     let errors = 0;
@@ -239,7 +239,7 @@ const aiMakeConnection = (case_id) => {
 
     if (errors != 0) return;
 
-    fetch(`/api/case/${case_id}/ai/connection`, {
+    fetch(`/api/case/${caseData.pk}/ai/connection`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -294,6 +294,6 @@ const aiMakePrediction = (caseData) => {
 }
 
 export const aiActionsApis = (caseData) => {
-    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData.pk));
-    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData.pk));
+    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData));
+    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData));
 }
