@@ -294,6 +294,6 @@ const aiMakePrediction = (caseData) => {
 }
 
 export const aiActionsApis = (caseData) => {
-    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData));
-    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData));
+    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData.pk));
+    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData.pk));
 }
