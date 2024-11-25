@@ -227,7 +227,8 @@ def connection_api_view(req, case_id):
         try:
             data = json.loads(req.body)
             print("Received data:", data)
-            
+            case = get_object_or_404(Case, id=case_id)
+            print('Files', case.files)
             # Return a JSON response
             return JsonResponse({"message": "Connection made successfully!"})
         except json.JSONDecodeError:

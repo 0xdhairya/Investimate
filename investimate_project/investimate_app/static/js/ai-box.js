@@ -222,10 +222,10 @@ function getCSRFToken() {
 
 const aiMakeConnection = (caseData) => {
     const entityList = document.getElementById("entity-list");
-    const entities = Array.from(entityList.children);
+    const entitiesElement = Array.from(entityList.children);
     let errors = 0;
 
-    entities.forEach((entity, i) => {
+    entitiesElement.forEach((entity, i) => {
         const categoryDropdown = entity.querySelector(`#entity-${i + 1}-category`);
         const valueDropdown = entity.querySelector(`#entity-${i + 1}-value`);
 
