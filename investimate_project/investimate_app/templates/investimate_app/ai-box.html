@@ -8,10 +8,27 @@
       <p class="dropdown-item">Connection</p>
     </div>
   </div>
-  <div id="section-prediction" class="container-fluid" hidden>
+  <div id="section-prediction" class="container-fluid">
     <div class="my-3">
-      <input type="text" class="form-control" id="aiPredictionText" placeholder="What prediction do you want to make?" />
+      <input type="text" class="form-control" id="aiPredictionText" placeholder="Event?" maxlength="25" />
       <p class="error-text" id="aiPredictionTextError"></p>
+      <div class="mt-2">
+        <p class="m-0 small">When?</p>
+        <div class="form-check form-check-inline">
+          <input checked class="form-check-input" type="radio" name="predictionDate" id="predictionWhen1" value="Anytime" />
+          <label class="form-check-label small" for="predictionWhen1">Anytime</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="predictionDate" id="predictionWhen2" value="Date" />
+          <label class="form-check-label small" for="predictionWhen2">Specific Date</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="predictionDate" id="predictionWhen3" value="Date Range" />
+          <label class="form-check-label small" for="predictionWhen3">Date Range</label>
+        </div>
+        <div class="mt-2" id="predictionDatePicker"></div>
+        <p class="error-text" id="aiDatePickerError"></p>
+      </div>
     </div>
     <button id="aiMakePrediction" class="w-100 btn btn-outline-info">Make Prediction</button>
   </div>

@@ -94,6 +94,7 @@ main {
 .error-text {
     color: red;
     font-size: small;
+    margin: 0;
 }
 
 .main-container {

@@ -13,6 +13,7 @@ export const setAiAction = () => {
             if (aiAction.toLowerCase() == 'prediction') {
                 document.getElementById('section-prediction').hidden = false;
                 document.getElementById('section-connection').hidden = true;
+                setDatePicker();
             } else {
                 document.getElementById('section-prediction').hidden = true;
                 document.getElementById('section-connection').hidden = false;
@@ -262,35 +263,130 @@ const aiMakeConnection = (caseData) => {
         });
 }
 
+const setDatePicker = () => {
+    const updateDatePicker = () => {
+        const selectedValue = document.querySelector('input[name="predictionDate"]:checked').value;
+        predictionDatePicker.innerHTML = "";
+        if (selectedValue === "Date") {
+            const input = document.createElement("input");
+            input.type = "date";
+            input.className = "form-control";
+            input.id = "specificDatePicker";
+            predictionDatePicker.appendChild(input);
+        } else if (selectedValue === "Date Range") {
+            const startLabel = document.createElement("label");
+            startLabel.textContent = "Start Date";
+            startLabel.className = "small";
+
+            const startDate = document.createElement("input");
+            startDate.type = "date";
+            startDate.className = "form-control";
+            startDate.id = "startDatePicker";
+
+            const endLabel = document.createElement("label");
+            endLabel.textContent = "End Date";
+            endLabel.className = "small";
+
+            const endDate = document.createElement("input");
+            endDate.type = "date";
+            endDate.className = "form-control";
+            endDate.id = "endDatePicker";
+
+            predictionDatePicker.appendChild(startLabel);
+            predictionDatePicker.appendChild(startDate);
+            predictionDatePicker.appendChild(endLabel);
+            predictionDatePicker.appendChild(endDate);
+        }
+    }
+
+    const radioButtons = document.getElementsByName("predictionDate");
+    radioButtons.forEach((radio) => {
+        radio.addEventListener("change", () => {
+            updateDatePicker();
+            const datePickerErrorElement = document.getElementById('aiDatePickerError');
+            datePickerErrorElement.innerText = ''
+        });
+    });
+};
+
 const aiMakePrediction = (caseData) => {
     const predictionText = document.getElementById('aiPredictionText')?.value;
     const errorMessageElement = document.getElementById('aiPredictionTextError');
-    if (predictionText && predictionText != '') {
-        errorMessageElement.innerText = '';
-        const body = {
-            predictionText,
-        };
-        fetch(`/api/case/${caseData.pk}/ai/prediction`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify(body),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        }).then((data) => {
-            console.log("Response from server:", data);
-            insightsSection(caseData.pk, data.insights);
-        }).catch((error) => {
-            console.error("Error sending data:", error);
-        });
-        return;
+
+    const selectedDateType = document.querySelector('input[name="predictionDate"]:checked')?.value;
+    const datePickerErrorElement = document.getElementById('aiDatePickerError');
+    let isValid = true;
+
+    errorMessageElement.innerText = '';
+    datePickerErrorElement.innerText = '';
+
+    // Validate Prediction Text
+    if (!predictionText || predictionText === '') {
+        errorMessageElement.innerText = 'Please enter some event to predict';
+        isValid = false;
     }
-    if (predictionText == '') errorMessageElement.innerText = 'Please enter some event to predict';
+
+    // Validate Dates Based on Selected Radio Button
+    if (selectedDateType === 'Date') {
+        const specificDate = document.getElementById('specificDatePicker')?.value;
+        if (!specificDate || specificDate === '') {
+            datePickerErrorElement.innerText = 'Please select a specific date.';
+            isValid = false;
+        }
+    } else if (selectedDateType === 'Date Range') {
+        const startDate = document.getElementById('startDatePicker')?.value;
+        const endDate = document.getElementById('endDatePicker')?.value;
+        const err = [];
+
+        if (!startDate || startDate === '') {
+            err.push('start');
+            isValid = false;
+        }
+        if (!endDate || endDate === '') {
+            err.push('end');
+            isValid = false;
+        }
+
+        if (err.length) {
+            datePickerErrorElement.innerText = `Please enter ${err.join(' and ')} date.`;
+        } else if (new Date(startDate) > new Date(endDate)) {
+            datePickerErrorElement.innerText = 'Start date cannot be after end date.';
+            isValid = false;
+        }
+    }
+
+    if (!isValid) {
+        return; // Stop execution if validations fail
+    }
+
+    const body = {
+        predictionText,
+    };
+    if (selectedDateType === 'Date') {
+        body.date = document.getElementById('specificDatePicker').value;
+    } else if (selectedDateType === 'Date Range') {
+        body.startDate = document.getElementById('startDatePicker').value;
+        body.endDate = document.getElementById('endDatePicker').value;
+    }
+
+    fetch(`/api/case/${caseData.pk}/ai/prediction`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(),
+        },
+        body: JSON.stringify(body),
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then((data) => {
+        console.log("Response from server:", data);
+        insightsSection(caseData.pk, data.insights);
+    }).catch((error) => {
+        console.error("Error sending data:", error);
+    });
 }
 
 export const aiActionsApis = (caseData) => {
