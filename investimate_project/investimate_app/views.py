@@ -202,12 +202,11 @@ def insight_view(req, case_id,insight_id):
     }
     return render(req, "investimate_app/insight.html", context )
 
-# Case Data API
+# Insight Data API
 @login_required
 def insight_api_view(req, case_id, insight_id):
     case = get_object_or_404(Case, id=case_id)
-    case_data = serialize('json', [case])
-    return JsonResponse({'case': case_data})
+    return JsonResponse({'caseFiles': case.files})
 
 @login_required
 def remove_insight_view(req, case_id, id):

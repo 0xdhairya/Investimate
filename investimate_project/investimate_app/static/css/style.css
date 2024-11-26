@@ -110,6 +110,12 @@ main {
     height: 450px;
 }
 
+.subtext {
+    font-size: x-small;
+    padding: 0;
+    margin: 0;
+}
+
 @media screen and (max-width: 768px) {
     .main-container {
         flex-direction: column;

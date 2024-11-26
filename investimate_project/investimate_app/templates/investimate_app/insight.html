@@ -43,33 +43,29 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <div>
-              <h5 class="modal-title" id="exampleModalLabel"></h5>
-              <div>
-                <label class="m-2"><input type="radio" name="highlight-color" value="name" checked />Name</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="location" />Location</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="date" />Date</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="contact-number" />Contact Number</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="miscellaneous" />Miscellaneous</label>
-              </div>
-            </div>
+            <h5 class="modal-title" id="exampleModalLabel"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="modal-file-content"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="save-highlight">Save Highlight</button>
-          </div>
         </div>
       </div>
     </div>
 
     <div class="main-container">
       <div class="section-container" id="insight-info">
-        <p class="h5 text-decoration-underline text-center">Insights</p>
+        <p class="h5 text-decoration-underline text-center">Insight</p>
         <div class="insight-list" id="insight-list"></div>
       </div>
       <div class="section-container" id="insight-files">
         <p class="h5 text-decoration-underline text-center">Files</p>
+        <div>
+          <div class="input-group">
+            <input type="text" class="form-control" id="fileSearchText" placeholder="Search among all the files" />
+            <button class="btn btn-outline-success" id="fileSearchButton">Search</button>
+          </div>
+          <p class="subtext">* Case sensitive search that will try to find exact search text matches</p>
+          <p class="m-0 error-text" id="fileSearchTextError"></p>
+        </div>
         <ul class="file-list" id="file-list"></ul>
       </div>
     </div>
@@ -77,6 +73,7 @@
 {% endblock %}
 
 {% block jsScripts %}
+  <script type="module" src="{% static 'js/insight.js' %}"></script>
   <script>
     const confirmInsightDelete = () => {
       return confirm('Are you sure you want to delete this insight?')

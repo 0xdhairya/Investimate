@@ -16,6 +16,7 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('api/home/', views.home_api_view, name='home_api'),
     path('api/case/<int:case_id>/', views.case_api_view, name='case_api'),
+    path('api/case/<int:case_id>/insight/<int:insight_id>/', views.insight_api_view, name='insight_api'),
     path('api/case/highlight/<int:case_id>/', views.save_highlight_view, name='save-highlight'),
     path("api/case/<int:case_id>/update-notes",views.update_notes_api_view, name='case-update-notes'),
     path("api/case/<int:case_id>/ai/prediction",views.prediction_api_view, name='case-prediction'),
