@@ -23,7 +23,12 @@ const searchKeyword = (files) => {
             errorText.innerText = 'Search text cannot be empty';
             return;
         }
-        const filteredFiles = Object.keys(files).filter((file) => files[file].content.includes(searchKeyword));
+        const filteredFiles = {}
+        Object.keys(files).forEach((file) => {
+            if (files[file].content.includes(searchKeyword)) {
+                filteredFiles[file] = files[file]
+            }
+        });
         populateCaseFiles(filteredFiles)
     })
 }
