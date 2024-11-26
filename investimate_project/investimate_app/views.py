@@ -275,49 +275,53 @@ def update_notes_api_view(req, case_id):
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-def insights(request):
-    try:
-        # Configure the Generative AI
-        genai.configure(api_key="AIzaSyDZ-saDit_azPEmMhtl43cioFAH63ehZ2s")
+@login_required
+def connection_ai(req,all_details,entities):
+    with open('key.json') as source:
+        key_content = json.load (source)
+    credentials = service_account.Credentials.from_service_account_info(key_content)
+    vertexai.init(project="primordial-mile-345507", location="us-central1", credentials=credentials)
 
-        # Generation configuration
-        generation_config = {
-            "temperature": 1,
-            "top_p": 0.95,
-            "top_k": 40,
-            "max_output_tokens": 8192,
-            "response_mime_type": "application/json",
-        }
+    # Create the model
+    generation_config = {
+      "temperature": 1,
+      "top_p": 0.95,
+      "top_k": 40,
+      "max_output_tokens": 8192,
+      "response_mime_type": "application/json"
+    }
+    model = GenerativeModel("gemini-1.5-flash-002")
+    # all_details = {"cia33.txt":{"content":"Report Date 12 April, 2003. CIA From French Intelligence: Acting on a tip from an unnamed source, French police arrested an Egyptian named Muhammad Shamzai at his home at 16 Rue St. Sebastien in Paris on 8 April, 2002. In his home police found 200 US and 180 British blank passports. In addition, on the hard drive of Shamzai's laptop computer was a record of a US and British passports that Shamzai had apparently forged. One of these passports was made out in the name Masood Yaser, whose address was listed as 1660 Coal Mine Road, Apartment 206, Denver, Colorado, USA. Another US passport forged was in the name Vincent Lozario, 2229 Marshall Avenue, Minneapolis, Minnesota, USA. A third forged US passport was in the name Khalfan Maulid, 656 Laurel Avenue, Bowling Green, Kentucky, USA.","annotations":{}},"fbi10.txt":{"content":"FBI: A routine check of security at the New York Stock Exchange [NYSE] reveals some anomalies in background checks of several persons who now hold vendor's IDs that allow them access to the NYSE provided that they are accompanied by security guards. (i) A man named Derek Shepherd, employed by the City Computer Services Corp. failed, in his application for a NYSE vendor's ID, to report his arrest and conviction [12 December, 2001 on a charge of assault and battery. He served six months in jail and is now out on probation. (ii) Stephanie Edwards, employed by the Clark & Co. Office Supplies Co., gave her current home address on her application for a vendor's ID as: 1631 Webster Ave.. The Bronx. NYC. There is no one by the name Stephanie Edwards at this residence. (iii) A man named Mark Sloan, reported age 32 years, obtained a social security card and a New York State driver's license in 1999 using a birth certificate now believed to have been forged. He is employed by Empire State Vending Services in Manhattan and he services vending machines such as coffee, soft drink, and candy machines. He lists his home address as: 2462 Myrtle Ave. Apt. 307, Queens, NYC.","annotations":{"miscellaneous":["ie Edwards, employed by the Clark & Co. Office Supplies Co., gave her current home address on her application for a vend"],"contact-number":[]}},"fbi25.txt":{"content":"FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen . The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop. While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN. These cartons contained C-4 explosive. Attempts to reach Erica Hahn have not been successful. An employee at the carpet shop later told police that Erica Hahn had just gone on a vacation in Canada and that she had left no address.","annotations":{"location":["North Bergen, NJ"],"date":["April 26, 2003"]}}}
+    # entities = {
+    #   "entity-1": {
+    #     "file": "fbi25.txt",
+    #     "h_text": "North Bergen, NJ",
+    #     "category": "location"
+    #   },
+    #   "entity-2": {
+    #     "file": "fbi25.txt",
+    #     "h_text": "April 26, 2003",
+    #     "category": "date"
+    #   }
+    # }
 
-        # Initialize the model
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            generation_config=generation_config,
-        )
+    response = model.generate_content( """
+        Imagine you're Sherlock Holmes. Solve the following case. Here's the data in JSON format:
+        
+        Case Details:
+        {content}
+        
+        Highlighted Entities:
+        {entities}
+        
+        Instructions:
+        - Analyze the relationship between `entity-1` and `entity-2`.
+        - Provide insights based on the annotations and file content.
+        - Ensure the output is in JSON format with the following structure:
+          insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of  lines in the file used for the insight as the value
+        """.format(
+            content=json.dumps(all_details),
+            entities=json.dumps(entities)
+        ), generation_config=generation_config)
 
-        # Generate content
-        response = model.generate_content("""Imagine you're sherlock holmes, with the given text, generate insights for helping in crime solving,
-                                            1.	Money Laundering Connection: Atticus Lincoln, owner of Select Gourmet Foods in Virginia, is potentially involved in money laundering through deposits from foreign accounts in Egypt and the UAE. These deposits were made to his account at First Union National Bank, which has a history of suspicious activity. Erica Hahn, who has deposited checks from this same account, adds another layer of suspicion, suggesting that she may be involved in the same money laundering scheme.
-                                            """)
-
-        # Return as JSON response
-        parsed_data = json.loads(response.text)
-
-        # Extract and format insights
-        insights = parsed_data.get("insights", [])
-        formatted_text = ""
-        for i, insight in enumerate(insights, start=1):
-            if "summary" in insight:
-                formatted_text += f"{i}. {insight['summary']}\n"
-            else:
-                # Fallback to creating a summary from other fields
-                formatted_text += (
-                    f"{i}. {insight.get('suspect', 'Unknown')}: {insight.get('crime', 'Unknown Crime')}. "
-                    f"Evidence: {insight.get('evidence', 'No evidence provided.')}\n"
-                )
-
-        # Return formatted text
-        return JsonResponse({"status": "success", "data": formatted_text})
-
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return response.text
