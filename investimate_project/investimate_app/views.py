@@ -266,16 +266,16 @@ def prediction_api_view(req, case_id):
             data = json.loads(req.body)
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
-            prediction_text = data.predictionText
-            date = data.date
-            start_date = data.startDate
-            end_date = data.endDate
+            prediction_text = data.get('predictionText')
+            date = data.get('date')
+            start_date = data.get('startDate')
+            end_date = data.get('endDate')
             if date:
-                event_text = f"Event: {prediction_text}, on {date}"
+                event_text = f"{prediction_text}, on {date}"
             elif start_date and end_date:
-                event_text = f"Event: {prediction_text}, between {start_date} and {end_date}"
+                event_text = f"{prediction_text}, between {start_date} and {end_date}"
             else:
-                event_text = f"Event: {prediction_text}"
+                event_text = prediction_text
                 
             # MAKE API CALL to AI API and populate the output object in the new_insight object
             # replace the dummy 'output' object with the one generated bt AI
@@ -290,6 +290,18 @@ def prediction_api_view(req, case_id):
                     "text": "akjsndfkjasfnjas",
                     "files" : {
                         "fbi25.txt": [
+                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
+                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
+                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
+                            "These cartons contained C-4 explosive."
+                        ],
+                        "fbi12.txt": [
+                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
+                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
+                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
+                            "These cartons contained C-4 explosive."
+                        ],
+                        "fbi55.txt": [
                             "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
                             "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
                             "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",

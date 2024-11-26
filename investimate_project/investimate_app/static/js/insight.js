@@ -36,7 +36,16 @@ const populateInsight = (insight) => {
 
     Object.keys(insight.output.files).forEach((file) => {
         const div = document.createElement('div');
-        div.innerHTML = `<p class="h6">${file}</p>`;
+        div.innerHTML = `
+        <p class="h6">${file}</p>
+        <ul></ul>
+        `;
+        const ul = div.querySelector('ul');
+        insight.output.files[file].forEach((line) => {
+            const item = document.createElement('li');
+            item.innerText = line;
+            ul.appendChild(item);
+        })
         insightsFiles.appendChild(div);
     })
 }

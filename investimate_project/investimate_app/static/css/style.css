@@ -109,6 +109,8 @@ main {
     border-radius: 5px;
     padding: 10px;
     height: 450px;
+    display: flex;
+    flex-direction: column;
 }
 
 .subtext {
