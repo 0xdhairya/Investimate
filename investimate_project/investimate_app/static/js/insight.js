@@ -28,6 +28,19 @@ const searchKeyword = (files) => {
     })
 }
 
+const populateInsight = (insight) => {
+    document.getElementById('predictionTitle').innerText = insight.category + ': ' + insight.input.text;
+    document.getElementById('predictionValue').innerText = insight.output.text;
+    const insightsFiles = document.getElementById('insightFiles');
+    console.log('files', insight.output);
+
+    Object.keys(insight.output.files).forEach((file) => {
+        const div = document.createElement('div');
+        div.innerHTML = `<p class="h6">${file}</p>`;
+        insightsFiles.appendChild(div);
+    })
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const path = window.location.pathname;
     const pathSegments = path.split('/');
@@ -43,9 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((data) => {
             const files = JSON.parse(data.caseFiles);
-            console.log('CASE files', files);
             populateCaseFiles(files);
             searchKeyword(files);
+            populateInsight(data.insight);
         })
         .catch((error) => {
             console.error("Error fetching case data:", error);

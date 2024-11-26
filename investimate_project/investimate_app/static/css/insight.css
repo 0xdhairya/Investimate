@@ -1,10 +1,17 @@
-#insight-files {
+#insight-files,
+#insight-info {
     flex: 1;
     background-color: white;
     border-radius: 5px;
     padding: 10px;
-    margin: 2px;
+    margin: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#insightFiles {
+    border: 1px solid black;
+    border-radius: 5px;
+
 }
 
 .file-list {

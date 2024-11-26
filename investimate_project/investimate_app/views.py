@@ -206,7 +206,10 @@ def insight_view(req, case_id,insight_id):
 @login_required
 def insight_api_view(req, case_id, insight_id):
     case = get_object_or_404(Case, id=case_id)
-    return JsonResponse({'caseFiles': case.files})
+    insight_index = next((index for index, insight in enumerate(case.insights) if insight["id"] == insight_id), None)
+    if insight_index is None:
+        return JsonResponse({"error": "Insight not found."}, status=404)
+    return JsonResponse({'caseFiles': case.files, 'insight': case.insights[insight_index]})
 
 @login_required
 def remove_insight_view(req, case_id, id):
@@ -215,7 +218,7 @@ def remove_insight_view(req, case_id, id):
         case = get_object_or_404(Case, id=case_id)
         insight_index = next((index for index, insight in enumerate(case.insights) if insight["id"] == id), None)
         if insight_index is None:
-            return render(req, "404.html", {"error_message": "Insight not found."}, status=404)
+            return JsonResponse({"error": "Insight not found."}, status=404)
         del case.insights[insight_index]
         case.save()
         return redirect("case", case_id=case_id)
@@ -227,9 +230,31 @@ def connection_api_view(req, case_id):
             data = json.loads(req.body)
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
-            print('Files', case.files)
-            # Return a JSON response
-            return JsonResponse({"message": "Connection made successfully!"})
+                
+            # MAKE API CALL to AI API and populate the output object in the new_insight object
+            # replace the dummy 'output' object with the one generated bt AI
+            new_insight = {
+                "id": max([insight["id"] for insight in case.insights], default=0) + 1,
+                "generated_at": now().isoformat(),
+                "category": 'Connection',
+                "input": {
+                    # need to put in entities from the payload
+                },
+                "output":{
+                    "text": "akjsndfkjasfnjas",
+                    "files" : {
+                        "fbi25.txt": [
+                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
+                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
+                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
+                            "These cartons contained C-4 explosive."
+                        ]
+                    }
+                }
+            }
+            case.insights.append(new_insight)
+            case.save()
+            return JsonResponse({"message": "Prediction made successfully!", "insights":case.insights})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -241,15 +266,36 @@ def prediction_api_view(req, case_id):
             data = json.loads(req.body)
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
+            prediction_text = data.predictionText
+            date = data.date
+            start_date = data.startDate
+            end_date = data.endDate
+            if date:
+                event_text = f"Event: {prediction_text}, on {date}"
+            elif start_date and end_date:
+                event_text = f"Event: {prediction_text}, between {start_date} and {end_date}"
+            else:
+                event_text = f"Event: {prediction_text}"
+                
+            # MAKE API CALL to AI API and populate the output object in the new_insight object
+            # replace the dummy 'output' object with the one generated bt AI
             new_insight = {
-                "id": max([insight["id"] for insight in case.insights], default=0) + 1,  # Assign a new ID based on the length of insights
+                "id": max([insight["id"] for insight in case.insights], default=0) + 1,
                 "generated_at": now().isoformat(),
                 "category": 'Prediction',
                 "input": {
-                    "text": data['predictionText'],
+                    "text": event_text,
                 },
                 "output":{
                     "text": "akjsndfkjasfnjas",
+                    "files" : {
+                        "fbi25.txt": [
+                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
+                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
+                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
+                            "These cartons contained C-4 explosive."
+                        ]
+                    }
                 }
             }
             case.insights.append(new_insight)
