@@ -35,10 +35,10 @@
         <p id="case-description" class="small"></p>
       </div>
       <div class="case-buttons">
-        <form action="{% url 'case_summary' case.id %}" method="post">
+        {% comment %} <form action="{% url 'case_summary' case.id %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-outline-info w-100">Generate AI Summary</button>
-        </form>
+        </form> {% endcomment %}
         {% if case.status != 'Closed' %}
           <form action="{% url 'close-case' case.id %}" method="post">
             {% csrf_token %}
@@ -59,13 +59,17 @@
           <div class="modal-header">
             <div>
               <h5 class="modal-title" id="exampleModalLabel"></h5>
-              <div>
-                <label class="m-2"><input type="radio" name="highlight-color" value="name" checked />Name</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="location" />Location</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="date" />Date</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="contact-number" />Contact Number</label>
-                <label class="m-2"><input type="radio" name="highlight-color" value="miscellaneous" />Miscellaneous</label>
+              <div class="d-flex align-items-center">
+                <p class="m-0">Annotation Categoty:</p>
+                <div>
+                  <label class="m-2"><input type="radio" name="highlight-color" value="name" checked />Name</label>
+                  <label class="m-2"><input type="radio" name="highlight-color" value="location" />Location</label>
+                  <label class="m-2"><input type="radio" name="highlight-color" value="date" />Date</label>
+                  <label class="m-2"><input type="radio" name="highlight-color" value="contact-number" />Contact Number</label>
+                  <label class="m-2"><input type="radio" name="highlight-color" value="miscellaneous" />Miscellaneous</label>
+                </div>
               </div>
+              <p class="m-0 small">* Choose the category for which you want to annotate.</p>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
