@@ -22,4 +22,5 @@ urlpatterns = [
     path("api/case/<int:case_id>/ai/prediction",views.prediction_api_view, name='case-prediction'),
     path("api/case/<int:case_id>/ai/connection",views.connection_api_view, name='case-connection'),
     path('api/cases/', views.cases_api_view, name='cases_api'),
+    # path("api/insights/",views.insights, name='insights'),
 ]

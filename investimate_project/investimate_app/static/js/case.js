@@ -13,53 +13,40 @@ let totalEntities = 0;
 const notesSection = (caseData) => {
     const caseNotes = document.getElementById('case-notes');
     caseNotes.textContent = caseData.fields.notes;
-    const editButton = document.getElementById('notesEditButton');
-    const saveButton = document.getElementById('notesSaveButton');
-    const cancelButton = document.getElementById('notesCancelButton');
-    const notesError = document.getElementById('notesError');
-    editButton.addEventListener('click', () => {
-        editButton.hidden = true;
-        caseNotes.disabled = false;
-        saveButton.hidden = false;
-        cancelButton.hidden = false;
-    });
 
-    cancelButton.addEventListener('click', () => {
-        editButton.hidden = false;
-        caseNotes.disabled = true;
-        saveButton.hidden = true;
-        cancelButton.hidden = true;
-        caseNotes.textContent = caseData.fields.notes;
-    });
+    let typingTimeout;
+    let savedNotes;
 
-    saveButton.addEventListener('click', () => {
-        editButton.hidden = false;
-        caseNotes.disabled = true;
-        saveButton.hidden = true;
-        cancelButton.hidden = true;
-
-        const notes = caseNotes.value;
-        fetch(`/api/case/${caseData.pk}/update-notes`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify({ updatedContent: notes }),
-        })
-            .then((response) => {
+    caseNotes.addEventListener('input', () => {
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            const notes = caseNotes.value;
+            fetch(`/api/case/${caseData.pk}/update-notes`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken(),
+                },
+                body: JSON.stringify({ updatedContent: notes }),
+            }).then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
-            .then((data) => {
-                alert('Case Notes Updated')
-            })
-            .catch((error) => {
-                console.error("Error fetching case data:", error);
-                caseNotes.textContent = caseData.fields.notes;
-            });
+                .then((data) => {
+                    const saved = document.getElementById('notes-saved');
+                    saved.hidden = false;
+                    clearTimeout(savedNotes);
+                    savedNotes = setTimeout(() => {
+                        saved.hidden = true;
+                    }, 3000);
+                })
+                .catch((error) => {
+                    console.error("Error fetching case data:", error);
+                    caseNotes.textContent = caseData.fields.notes;
+                });
+        }, 8000);
     });
 }
 
