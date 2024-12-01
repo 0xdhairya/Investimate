@@ -10,7 +10,7 @@ export const setAiAction = () => {
         item.addEventListener('click', (event) => {
             const aiAction = event.target.textContent;
             dropdownToggle.textContent = aiAction;
-            if (aiAction.toLowerCase() == 'prediction') {
+            if (aiAction.toLowerCase() == 'hypothesize') {
                 document.getElementById('section-prediction').hidden = false;
                 document.getElementById('section-connection').hidden = true;
                 setDatePicker();
