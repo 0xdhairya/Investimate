@@ -280,7 +280,7 @@ def connection_api_view(req, case_id):
             }
             case.insights.append(new_insight)
             case.save()
-            return JsonResponse({"message": "Prediction made successfully!", "insights":case.insights})
+            return JsonResponse({"message": "Hypothesis generated!", "insights":case.insights})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -308,7 +308,7 @@ def prediction_api_view(req, case_id):
             new_insight = {
                 "id": max([insight["id"] for insight in case.insights], default=0) + 1,
                 "generated_at": now().isoformat(),
-                "category": 'Prediction',
+                "category": 'Hypothesis',
                 "input": {
                     "text": event_text,
                 },
@@ -338,7 +338,7 @@ def prediction_api_view(req, case_id):
             }
             case.insights.append(new_insight)
             case.save()
-            return JsonResponse({"message": "Prediction made successfully!", "insights":case.insights})
+            return JsonResponse({"message": "Hypothesis generated!", "insights":case.insights})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)

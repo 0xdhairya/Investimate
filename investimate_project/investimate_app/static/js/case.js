@@ -56,7 +56,7 @@ export const insightsSection = (case_id, insights) => {
     insights.forEach((insight, i) => {
         const insightItem = document.createElement('div');
         insightItem.classList.add('insight-item');
-        if (insight.category == 'Prediction') {
+        if (insight.category == 'Hypothesis') {
             insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.text}`;
         }
         insightItem.addEventListener("click", () => {
