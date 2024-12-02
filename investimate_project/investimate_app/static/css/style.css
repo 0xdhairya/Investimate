@@ -105,6 +105,33 @@ main {
 }
 
 .section-container {
+    flex: 4;
+    border-radius: 5px;
+    padding: 10px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-container-75 {
+    flex: 3;
+    border-radius: 5px;
+    padding: 10px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-container-50 {
+    flex: 2;
+    border-radius: 5px;
+    padding: 10px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-container-25 {
     flex: 1;
     border-radius: 5px;
     padding: 10px;

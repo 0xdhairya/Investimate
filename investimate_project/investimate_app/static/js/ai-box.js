@@ -197,7 +197,6 @@ const addEntityItem = (annotations, totalEntities) => {
 }
 
 export const fillEntityList = (annotations, minTwoEntities, totalEntities) => {
-    console.log('Here', minTwoEntities, totalEntities);
     if (!minTwoEntities) {
         document.getElementById('no-entities').hidden = false;
         document.getElementById('contain-entities').hidden = true;

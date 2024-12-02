@@ -31,7 +31,8 @@
   flex-direction: column;
 }
 
-.notes textarea {
+.notes textarea,
+.file-content {
   flex: 1;
   width: 100%;
   border: 1px solid #ccc;
@@ -94,16 +95,13 @@
   background-color: lightslategray;
 }
 
-.highlight-name,
-.highlight-location,
-.highlight-contact-number,
-.highlight-date,
-.highlight-miscellaneous {
-  cursor: no-drop;
+.remove-highlight-btn {
+  cursor: pointer;
 }
 
 .aibox,
-.insights {
+.insights,
+.file-section {
   background-color: white;
   border-radius: 5px;
   padding: 10px 20px;

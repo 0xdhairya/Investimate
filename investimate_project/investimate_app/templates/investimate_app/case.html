@@ -59,37 +59,8 @@
     </div>
     <p id="case-description" class="small"></p>
 
-    <!-- Modal -->
-    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <div>
-              <h5 class="modal-title" id="exampleModalLabel"></h5>
-              <div class="d-flex align-items-center">
-                <p class="m-0">Annotation Categoty:</p>
-                <div>
-                  <label class="m-2"><input type="radio" name="highlight-color" value="name" checked />Name</label>
-                  <label class="m-2"><input type="radio" name="highlight-color" value="location" />Location</label>
-                  <label class="m-2"><input type="radio" name="highlight-color" value="date" />Date</label>
-                  <label class="m-2"><input type="radio" name="highlight-color" value="contact-number" />Contact Number</label>
-                  <label class="m-2"><input type="radio" name="highlight-color" value="miscellaneous" />Miscellaneous</label>
-                </div>
-              </div>
-              <p class="m-0 small">* Choose the category for which you want to annotate.</p>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body" id="modal-file-content"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="save-highlight">Save Highlight</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="main-container">
-      <div class="section-container">
+      <div class="section-container-50">
         <div class="files">
           <p class="h5 text-decoration-underline text-center">Files</p>
           <ul class="file-list" id="file-list"></ul>
@@ -111,10 +82,28 @@
       </div>
 
       <div class="section-container">
-        {% include 'investimate_app/ai-box.html' %}
+        <div class="file-section">
+          <div class="header">
+            <h5 id="file-name"></h5>
+            <p class="m-0 small">Annotation Category:</p>
+            <div>
+              <label class="mx-1 small"><input class="mx-1" type="radio" name="highlight-color" value="name" checked />Name</label>
+              <label class="mx-1 small"><input class="mx-1" type="radio" name="highlight-color" value="location" />Location</label>
+              <label class="mx-1 small"><input class="mx-1" type="radio" name="highlight-color" value="date" />Date</label>
+              <label class="mx-1 small"><input class="mx-1" type="radio" name="highlight-color" value="contact-number" />Contact Number</label>
+              <label class="mx-1 small"><input class="mx-1" type="radio" name="highlight-color" value="miscellaneous" />Miscellaneous</label>
+            </div>
+            <p class="m-0 subtext">Note: Select text to annotate. The annotation category will be based on the above selection.</p>
+          </div>
+          <div class="file-content" id="file-content"></div>
+        </div>
       </div>
 
       <div class="section-container">
+        {% include 'investimate_app/ai-box.html' %}
+      </div>
+
+      <div class="section-container-50">
         <div class="insights">
           <p class="h5 text-decoration-underline text-center">Insights</p>
           <div class="insight-list" id="insight-list"></div>
