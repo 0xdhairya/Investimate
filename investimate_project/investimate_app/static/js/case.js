@@ -7,7 +7,6 @@ let annotations = {
     'contact-number': [],
     'miscellaneous': [],
 };
-let minTwoEntities = false;
 let totalEntities = 0;
 
 const notesSection = (caseData) => {
@@ -71,8 +70,7 @@ const checkForMinTwoEntities = () => {
     Object.keys(annotations).forEach((cat) => {
         totalEntities += annotations[cat].length;
     })
-    minTwoEntities = totalEntities > 1 ? true : false;
-    fillEntityList(annotations, minTwoEntities, totalEntities);
+    fillEntityList(annotations, totalEntities);
 }
 
 const populateAnnotations = (files) => {

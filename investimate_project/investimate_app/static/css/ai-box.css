@@ -23,6 +23,10 @@
     overflow: auto;
 }
 
+.cat-entity-list {
+    list-style: none;
+}
+
 .red-border {
     border: 2px solid red;
 }

@@ -256,7 +256,7 @@ def connection_api_view(req, case_id):
                 {notes}
                 
                 Instructions:
-                - Based on the file content, establish relationship between entites in the highlighted entites object keys.
+                - Based on the file content, establish relationship between entites in the highlighted entites array.
                 - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
                 - Ensure the output is in JSON format with the following structure:
                     insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of  lines in the file used for the insight as the value
