@@ -23,8 +23,32 @@
     overflow: auto;
 }
 
-.cat-entity-list {
+#prediction-file-list {
+    max-height: 100px;
+    overflow: auto;
+}
+
+#prediction-file-list {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    gap: 7px;
+}
+
+#prediction-file-list .form-check-input,
+#entity-list .form-check-input {
+    margin: 0 !important;
+    float: none;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.checkbox-list {
     list-style: none;
+    padding: 0;
+    margin-top: 5px;
 }
 
 .red-border {

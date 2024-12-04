@@ -108,7 +108,7 @@ main {
     flex: 4;
     border-radius: 5px;
     padding: 10px;
-    height: 450px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }
@@ -117,7 +117,7 @@ main {
     flex: 3;
     border-radius: 5px;
     padding: 10px;
-    height: 450px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }
@@ -126,7 +126,7 @@ main {
     flex: 2;
     border-radius: 5px;
     padding: 10px;
-    height: 450px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }
@@ -135,7 +135,7 @@ main {
     flex: 1;
     border-radius: 5px;
     padding: 10px;
-    height: 450px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }

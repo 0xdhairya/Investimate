@@ -293,6 +293,7 @@ def prediction_api_view(req, case_id):
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
             prediction_text = data.get('predictionText')
+            prediction_files = data.get('predictionFiles')
             date = data.get('date')
             start_date = data.get('startDate')
             end_date = data.get('endDate')
@@ -302,7 +303,10 @@ def prediction_api_view(req, case_id):
                 event_text = f"{prediction_text}, between {start_date} and {end_date}"
             else:
                 event_text = prediction_text
-                
+            
+            all_files = json.loads(case.files)
+            fileContent = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
+
             # MAKE API CALL to AI API and populate the output object in the new_insight object
             # replace the dummy 'output' object with the one generated bt AI
             new_insight = {
@@ -311,6 +315,7 @@ def prediction_api_view(req, case_id):
                 "category": 'Hypothesis',
                 "input": {
                     "text": event_text,
+                    "files": prediction_files,
                 },
                 "output":{
                     "text": "akjsndfkjasfnjas",

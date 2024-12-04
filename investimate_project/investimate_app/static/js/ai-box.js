@@ -1,6 +1,5 @@
 import { insightsSection } from './case.js';
 
-
 export const setAiAction = () => {
     const dropdownItems = document.querySelectorAll('.ai-action-dropdown-items');
     const dropdownToggle = document.getElementById('aiActionDropdownMenu');
@@ -18,6 +17,19 @@ export const setAiAction = () => {
             }
         });
     });
+}
+
+export const fillPredictionFiles = (files) => {
+    const list = document.getElementById('prediction-file-list');
+    files.forEach((file) => {
+        const child = document.createElement('li');
+        child.innerHTML = `
+        <div class="form-check border p-1 align-items-center">
+            <input class="form-check-input small" type="checkbox" value="${file}">
+            <label class="form-check-label small" for="prediction-files">${file}</label>
+        </div>`;
+        list.appendChild(child);
+    })
 }
 
 export const fillEntityList = (annotations, totalEntities) => {
@@ -38,10 +50,10 @@ export const fillEntityList = (annotations, totalEntities) => {
             parent.className = "my-2"
             parent.innerHTML = `<p class="m-0 text-center text-capitalize">${cat}</p>`;
             const catEntityList = document.createElement('ul');
-            catEntityList.className = "m-0 cat-entity-list"
+            catEntityList.className = "checkbox-list"
             ann[cat].forEach((e) => {
                 const child = document.createElement('li');
-                child.className = "entity-list-item form-check align-items-center p-0 m-0"
+                child.className = "form-check align-items-center p-0 m-0"
                 child.innerHTML = `
                     <input class="form-check-input small" type="checkbox" value="${e.text}" data-file=${e.file} data-category=${cat}>
                     <label class="form-check-label small" for="${cat}">
@@ -154,10 +166,19 @@ const aiMakePrediction = (caseData) => {
 
     const selectedDateType = document.querySelector('input[name="predictionDate"]:checked')?.value;
     const datePickerErrorElement = document.getElementById('aiDatePickerError');
+
+    const predictionFiles = [];
+    const checkboxes = document.querySelectorAll('#prediction-file-list .form-check-input:checked');
+    checkboxes.forEach((checkbox) => {
+        predictionFiles.push(checkbox.value);
+    });
+
+    const filesError = document.getElementById('aiPredictionFileError');
     let isValid = true;
 
     errorMessageElement.innerText = '';
     datePickerErrorElement.innerText = '';
+    filesError.innerText = '';
 
     if (!predictionText || predictionText === '') {
         errorMessageElement.innerText = 'Please enter some event to predict';
@@ -192,12 +213,18 @@ const aiMakePrediction = (caseData) => {
         }
     }
 
+    if (predictionFiles.length < 1) {
+        filesError.innerText = 'Please select atleast one file.';
+        isValid = false;
+    }
+
     if (!isValid) {
         return;
     }
 
     const body = {
         predictionText,
+        predictionFiles,
     };
     if (selectedDateType === 'Date') {
         body.date = document.getElementById('specificDatePicker').value;

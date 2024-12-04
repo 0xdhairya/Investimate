@@ -1,6 +1,17 @@
+const fillPredictionFiles = (files) => {
+    const list = document.getElementById('prediction-file-list');
+    files.forEach((file) => {
+        const child = document.createElement('li');
+        child.innerHTML = `<div class="border border-primary p-1 rounded text-primary" >${file}</div>`;
+        list.appendChild(child);
+    })
+}
+
 const populateCaseFiles = (files) => {
     const fileList = document.getElementById("file-list");
+    const list = document.getElementById('prediction-file-list');
     fileList.innerHTML = '';
+    list.innerHTML = '';
     Object.keys(files).forEach((file) => {
         const li = document.createElement("li");
         li.innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#fileModal">${file}</button>`;
@@ -30,6 +41,15 @@ const searchKeyword = (files) => {
             }
         });
         populateCaseFiles(filteredFiles)
+    })
+}
+
+const resetSearch = (files) => {
+    const resetButton = document.getElementById('fileSearchResetButton');
+    resetButton.addEventListener(('click'), () => {
+        const searchText = document.getElementById('fileSearchText');
+        searchText.value = '';
+        populateCaseFiles(files)
     })
 }
 
@@ -72,6 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const files = JSON.parse(data.caseFiles);
             populateCaseFiles(files);
             searchKeyword(files);
+            resetSearch(files);
+            fillPredictionFiles(data.insight.input.files);
             populateInsight(data.insight);
         })
         .catch((error) => {

@@ -1,4 +1,4 @@
-import { setAiAction, fillEntityList, aiActionsApis } from './ai-box.js'
+import { setAiAction, fillEntityList, fillPredictionFiles, aiActionsApis } from './ai-box.js'
 
 let annotations = {
     'date': [],
@@ -168,6 +168,7 @@ const populateCaseFiles = (caseData) => {
         }
         li.addEventListener("click", () => fillInCase(file));
     });
+    fillPredictionFiles(Object.keys(files));
 }
 
 function getCSRFToken() {
