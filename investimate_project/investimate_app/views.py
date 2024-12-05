@@ -50,16 +50,15 @@ def logout_view(req):
 # Home Page
 @login_required
 def home_view(req):
-    activeCases = Case.objects.filter(status=Case.Status.ACTIVE).count()
-    closedCases = Case.objects.filter(status=Case.Status.CLOSED).count()
+    activeCases = Case.objects.filter(status=Case.Status.ACTIVE, user=req.user).count()
+    closedCases = Case.objects.filter(status=Case.Status.CLOSED, user=req.user).count()
     return render(req, 'investimate_app/home.html', {'activeCases':activeCases, 'closedCases':closedCases})
 
 # Home API
 @login_required
 def home_api_view(req):
     cases = list(
-        Case.objects.all()
-        .order_by('-created_at')[:3]
+        Case.objects.filter(user=req.user).order_by('-created_at')[:3]
     )
     cases_list = serialize('json', cases)
     return JsonResponse({'recentCases': cases_list})
@@ -74,7 +73,7 @@ def add_case_view(req):
         files = req.FILES.getlist('files')
         
         if not files:
-                form.add_error('files', "No files submitted.")
+            form.add_error('files', "No files submitted.")
                 
         invalid_files = [file.name for file in files if not file.name.endswith('.txt')]
         if invalid_files:
@@ -83,6 +82,7 @@ def add_case_view(req):
                 
         if form.is_valid():
             case = form.save(commit=False)
+            case.user = req.user
             file_data = {}
             for file in files:
                 try:
@@ -115,7 +115,7 @@ def cases_view(req):
 @login_required
 def cases_api_view(req):
     cases = list(
-        Case.objects.all().order_by('-created_at')
+        Case.objects.filter(user=req.user).order_by('-created_at')
     )
     cases_list = serialize('json', cases)
     return JsonResponse({'cases': cases_list})
@@ -123,7 +123,7 @@ def cases_api_view(req):
 # Case Page
 @login_required
 def case_view(req, case_id):
-    case = Case.objects.get(id=case_id)
+    case = Case.objects.get(id=case_id, user=req.user)
     return render(req, 'investimate_app/case.html', {'case':case})
 
 # Case Data API
@@ -225,7 +225,6 @@ def insight_api_view(req, case_id, insight_id):
 
 @login_required
 def remove_insight_view(req, case_id, id):
-    print(case_id, id)
     if req.method == "POST":
         case = get_object_or_404(Case, id=case_id)
         insight_index = next((index for index, insight in enumerate(case.insights) if insight["id"] == id), None)

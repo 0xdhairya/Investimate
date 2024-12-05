@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Case(models.Model):
     class Status(models.TextChoices):
@@ -17,6 +18,12 @@ class Case(models.Model):
     )
     files = models.JSONField()
     insights = models.JSONField(default=list)
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="cases"
+    )
 
     def __str__(self):
         return self.name
