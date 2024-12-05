@@ -19,17 +19,46 @@ export const setAiAction = () => {
     });
 }
 
+const predictionFilesButtons = () => {
+    const checkboxes = document.querySelectorAll('#prediction-file-list .form-check-input');
+    document.getElementById('predictionFilesSelectAll').addEventListener('click', () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+    });
+    document.getElementById('predictionFilesClearSelection').addEventListener('click', () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+    });
+}
+
 export const fillPredictionFiles = (files) => {
     const list = document.getElementById('prediction-file-list');
     files.forEach((file) => {
         const child = document.createElement('li');
         child.innerHTML = `
-        <div class="form-check border p-1 align-items-center">
+        <div class="form-check border border-primary rounded text-primary p-1 align-items-center">
             <input class="form-check-input small" type="checkbox" value="${file}">
             <label class="form-check-label small" for="prediction-files">${file}</label>
         </div>`;
         list.appendChild(child);
-    })
+    });
+    predictionFilesButtons();
+}
+
+const entitySelectionButtons = () => {
+    const checkboxes = document.querySelectorAll('#entity-list .form-check-input');
+    document.getElementById('entitiesClearSelection').addEventListener('click', () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+    });
+    document.getElementById('entitiesSelectAll').addEventListener('click', () => {
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+    });
 }
 
 export const fillEntityList = (annotations, totalEntities) => {
@@ -65,6 +94,7 @@ export const fillEntityList = (annotations, totalEntities) => {
             entityListElement.appendChild(parent);
         }
     });
+    entitySelectionButtons();
 }
 
 function getCSRFToken() {

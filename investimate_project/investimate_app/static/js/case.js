@@ -4,7 +4,7 @@ let annotations = {
     'date': [],
     'name': [],
     'location': [],
-    'contact-number': [],
+    'number': [],
     'miscellaneous': [],
 };
 let totalEntities = 0;
@@ -78,7 +78,7 @@ const populateAnnotations = (files) => {
         'date': [],
         'name': [],
         'location': [],
-        'contact-number': [],
+        'number': [],
         'miscellaneous': [],
     };
     Object.keys(files).forEach((file) => {

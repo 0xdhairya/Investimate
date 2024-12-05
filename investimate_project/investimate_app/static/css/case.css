@@ -68,6 +68,8 @@
   white-space: normal;
   line-height: 1.5;
   padding: 3px;
+  border: solid hsl(0, 0%, 73%) 1px;
+  border-radius: 5px;
 }
 
 .insight-item:hover {
@@ -83,7 +85,7 @@
   background-color: lightgreen;
 }
 
-.highlight-contact-number {
+.highlight-number {
   background-color: lightpink;
 }
 
