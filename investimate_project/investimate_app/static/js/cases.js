@@ -27,7 +27,7 @@ const populateAllCases = (allCases) => {
             <div class="container">
                 <div class="h-100 text-center align-content-center mb-5">
                     <p class="h3">No Cases Yet...</p>
-                    <p class="card-subtitle">Create your first case and get started.</p>
+                    <p class="card-subtitle">Add your first case <a href="/add-case/" >here</a> to get started.</p>
                 </div>
             </div>
         `;
