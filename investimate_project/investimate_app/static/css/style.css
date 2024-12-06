@@ -146,6 +146,18 @@ main {
     margin: 0;
 }
 
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(63, 69, 239);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(48, 52, 188);
+}
+
 @media screen and (max-width: 768px) {
     .main-container {
         flex-direction: column;

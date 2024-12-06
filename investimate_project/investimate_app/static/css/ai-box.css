@@ -26,9 +26,6 @@
 #prediction-file-list {
     max-height: 100px;
     overflow: auto;
-}
-
-#prediction-file-list {
     flex: 1;
     display: flex;
     flex-wrap: wrap;

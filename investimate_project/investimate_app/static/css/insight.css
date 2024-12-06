@@ -34,7 +34,30 @@
     list-style: none;
     font-size: 0.9rem;
     display: flex;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
     margin: 0;
+}
+
+#all-file-checkbox {
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    gap: 7px;
+}
+
+#all-file-checkbox .form-check-input {
+    margin: 0 !important;
+    float: none;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.checkbox-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
 }

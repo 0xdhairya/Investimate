@@ -1,17 +1,61 @@
-const fillPredictionFiles = (files) => {
-    const list = document.getElementById('prediction-file-list');
-    files.forEach((file) => {
+const fillPredictionFiles = (allFiles, predictionFiles) => {
+    const predictionFilesEle = document.getElementById('prediction-file-list');
+    const newInputFilesEle = document.getElementById('all-file-checkbox');
+    const editButton = document.getElementById('edit-prediction-files');
+    const cancelButton = document.getElementById('cancel-prediction-files');
+    const saveButton = document.getElementById('save-prediction-files');
+
+    editButton.addEventListener('click', () => {
+        cancelButton.hidden = false;
+        saveButton.hidden = false;
+        editButton.hidden = true;
+        predictionFilesEle.hidden = true;
+        newInputFilesEle.hidden = false;
+    });
+
+    cancelButton.addEventListener('click', () => {
+        cancelButton.hidden = true;
+        saveButton.hidden = true;
+        editButton.hidden = false;
+        predictionFilesEle.hidden = false;
+        newInputFilesEle.hidden = true;
+    });
+
+    saveButton.addEventListener('click', () => {
+        // Before API call
+        cancelButton.disabled = true;
+        saveButton.disabled = true;
+
+        // After API call success
+        cancelButton.hidden = true;
+        saveButton.hidden = true;
+        editButton.hidden = false;
+        cancelButton.disabled = false;
+        saveButton.disabled = false;
+        predictionFilesEle.hidden = false;
+        newInputFilesEle.hidden = true;
+    });
+
+    predictionFiles.forEach((file) => {
         const child = document.createElement('li');
         child.innerHTML = `<div class="border border-primary p-1 rounded text-primary" >${file}</div>`;
-        list.appendChild(child);
-    })
+        predictionFilesEle.appendChild(child);
+    });
+
+    Object.keys(allFiles).forEach((file) => {
+        const child = document.createElement('li');
+        child.innerHTML = `
+        <div class="form-check border border-primary rounded text-primary p-1 align-items-center">
+            <input class="form-check-input small" type="checkbox" value="${file}" ${predictionFiles.includes(file) ? 'checked' : ''}>
+            <label class="form-check-label small" for="prediction-files">${file}</label>
+        </div>`;
+        newInputFilesEle.appendChild(child);
+    });
 }
 
 const populateCaseFiles = (files) => {
     const fileList = document.getElementById("file-list");
-    const list = document.getElementById('prediction-file-list');
     fileList.innerHTML = '';
-    list.innerHTML = '';
     Object.keys(files).forEach((file) => {
         const li = document.createElement("li");
         li.innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#fileModal">${file}</button>`;
@@ -99,7 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
             populateCaseFiles(files);
             searchKeyword(files);
             resetSearch(files);
-            fillPredictionFiles(data.insight.input.files);
+            if (data.insight.category == 'Hypothesis')
+                fillPredictionFiles(files, data.insight.input.files);
             populateInsight(data.insight);
         })
         .catch((error) => {

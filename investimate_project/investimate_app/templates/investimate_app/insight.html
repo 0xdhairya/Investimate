@@ -53,38 +53,51 @@
 
     <div class="main-container">
       <div class="section-container" id="insight-info">
-        <p class="h5 font-monospace" id="insightTitle"></p>
+        <p class="h5" id="insightTitle"></p>
         <ul class="h5 font-monospace" id="connection-items"></ul>
-        <div id="insight-text-box">
+        <p class="m-0">Insight by InvestiMate AI:</p>
+        <div class="shadow-sm p-1" id="insight-text-box">
           <p class="h5 font-monospace" id="predictionValue"></p>
         </div>
-        <p class="small mb-0 mt-1">NOTE: The insight was generated using the following lines of text from the files.</p>
+        <p class="small mb-0 mt-3">InvestiMate AI used the following lines of text to derive the above insight.</p>
         <div id="insightFiles"></div>
       </div>
       <div class="section-container" id="insight-files">
-        <div>
-          <ul id="prediction-file-list" class="file-list"></ul>
-          <ul id="all-file-checkbox" class="checkbox-list" hidden></ul>
-        </div>
-        <div id="search-box">
-          <div class="input-group">
-            <input type="text" class="form-control" id="fileSearchText" placeholder="Search text" />
-            <button class="btn btn-outline-success" id="fileSearchButton">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-              </svg>
-            </button>
-            <button class="btn btn-outline-secondary" id="fileSearchResetButton">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-              </svg>
-            </button>
+        {% if insight.category != 'Connection' %}
+          <div class="shadow-sm h-25">
+            <div class="d-flex align-items-center justify-content-between p-2">
+              <p class="m-0">Input Files</p>
+              <div class="d-flex gap-2">
+                <button id="edit-prediction-files" class="btn btn-sm btn-outline-secondary">Edit</button>
+                <button id="cancel-prediction-files" class="btn btn-sm btn-outline-danger" hidden>Cancel</button>
+                <button id="save-prediction-files" class="btn btn-sm btn-outline-success" hidden>Save & Regenerate</button>
+              </div>
+            </div>
+            <ul id="prediction-file-list" class="file-list"></ul>
+            <ul id="all-file-checkbox" class="checkbox-list" hidden></ul>
           </div>
-          <p class="subtext">* Case sensitive search that will try to find exact search text matches</p>
-          <p class="m-0 error-text" id="fileSearchTextError"></p>
+        {% endif %}
+        <div class="shadow-sm h-100 mt-3">
+          <div id="search-box">
+            <div class="input-group">
+              <input type="text" class="form-control" id="fileSearchText" placeholder="Search text" />
+              <button class="btn btn-outline-success" id="fileSearchButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+              </button>
+              <button class="btn btn-outline-secondary" id="fileSearchResetButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                </svg>
+              </button>
+            </div>
+            <p class="subtext">* Case sensitive search that will try to find exact search text matches</p>
+            <p class="m-0 error-text" id="fileSearchTextError"></p>
+          </div>
+          <ul class="file-list" id="file-list"></ul>
         </div>
-        <ul class="file-list" id="file-list"></ul>
       </div>
     </div>
   </div>
