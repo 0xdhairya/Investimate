@@ -59,7 +59,9 @@
   flex: 1;
   overflow-y: auto;
   font-size: 0.9rem;
-  gap: 15px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .insight-item {

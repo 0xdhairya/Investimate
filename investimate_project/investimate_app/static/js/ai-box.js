@@ -101,7 +101,7 @@ function getCSRFToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
 }
 
-const aiMakeConnection = (caseData) => {
+const aiMakeConnection = (connectionButton, caseData) => {
     const entities = [];
     const errorBox = document.getElementById('aiConnectionTextError');
     errorBox.innerText = '';
@@ -119,6 +119,7 @@ const aiMakeConnection = (caseData) => {
         errorBox.innerText = 'Please select atleast two entities to make a connection between them.';
         return;
     }
+    connectionButton.disabled = true;
     fetch(`/api/case/${caseData.pk}/ai/connection`, {
         method: "POST",
         headers: {
@@ -138,9 +139,13 @@ const aiMakeConnection = (caseData) => {
                 checkbox.checked = false;
             });
             console.log("Response from server:", data);
+            insightsSection(caseData.pk, data.insights);
         })
         .catch((error) => {
             console.error("Error sending data:", error);
+        })
+        .finally(() => {
+            connectionButton.disabled = false;
         });
 }
 
@@ -190,7 +195,7 @@ const setDatePicker = () => {
     });
 };
 
-const aiMakePrediction = (caseData) => {
+const aiMakePrediction = (predictionButton, caseData) => {
     const predictionText = document.getElementById('aiPredictionText')?.value;
     const errorMessageElement = document.getElementById('aiPredictionTextError');
 
@@ -262,6 +267,7 @@ const aiMakePrediction = (caseData) => {
         body.startDate = document.getElementById('startDatePicker').value;
         body.endDate = document.getElementById('endDatePicker').value;
     }
+    predictionButton.disabled = true;
 
     fetch(`/api/case/${caseData.pk}/ai/prediction`, {
         method: "POST",
@@ -280,10 +286,14 @@ const aiMakePrediction = (caseData) => {
         insightsSection(caseData.pk, data.insights);
     }).catch((error) => {
         console.error("Error sending data:", error);
+    }).finally(() => {
+        predictionButton.disabled = false;
     });
 }
 
 export const aiActionsApis = (caseData) => {
-    document.getElementById("aiMakeConnection").addEventListener("click", () => aiMakeConnection(caseData));
-    document.getElementById("aiMakePrediction").addEventListener("click", () => aiMakePrediction(caseData));
+    const connectionButton = document.getElementById("aiMakeConnection");
+    const predictionButton = document.getElementById("aiMakePrediction");
+    connectionButton.addEventListener("click", () => aiMakeConnection(connectionButton, caseData));
+    predictionButton.addEventListener("click", () => aiMakePrediction(predictionButton, caseData));
 }

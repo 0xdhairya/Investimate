@@ -22,7 +22,7 @@
         <li class="breadcrumb-item">
           <a href="{% url 'case' case.id %}">{{ case.name }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">{{ insight.id }}. {{ insight.category }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ insight.category }}</li>
       </ol>
     </nav>
     <div class="d-sm-flex justify-content-between">
@@ -33,7 +33,7 @@
       <div>
         <form action="{% url 'remove-insight' case.id insight.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">Remove Insight</button>
+          <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">Remove {{ insight.category }}</button>
         </form>
       </div>
     </div>
@@ -53,8 +53,11 @@
 
     <div class="main-container">
       <div class="section-container" id="insight-info">
-        <p class="h5 font-monospace" id="predictionTitle"></p>
-        <p class="h5 font-monospace" id="predictionValue"></p>
+        <p class="h5 font-monospace" id="insightTitle"></p>
+        <ul class="h5 font-monospace" id="connection-items"></ul>
+        <div id="insight-text-box">
+          <p class="h5 font-monospace" id="predictionValue"></p>
+        </div>
         <p class="small mb-0 mt-1">NOTE: The insight was generated using the following lines of text from the files.</p>
         <div id="insightFiles"></div>
       </div>
@@ -65,7 +68,7 @@
         </div>
         <div id="search-box">
           <div class="input-group">
-            <input type="text" class="form-control" id="fileSearchText" placeholder="Search among all the files" />
+            <input type="text" class="form-control" id="fileSearchText" placeholder="Search text" />
             <button class="btn btn-outline-success" id="fileSearchButton">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />

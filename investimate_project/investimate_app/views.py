@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.serializers import serialize
@@ -12,6 +12,7 @@ from .models import Case
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
+from .services import ai_function
 
 def signup_view(req):
     if req.method == 'POST':
@@ -241,9 +242,9 @@ def connection_api_view(req, case_id):
             data = json.loads(req.body)
             print("Received data:", data)
             case = get_object_or_404(Case, id=case_id)
-            fileContent = {filename: details["content"] for filename, details in json.loads(case.files).items()}
+            file_content = {filename: details["content"] for filename, details in json.loads(case.files).items()}
             prompt =  """
-                Imagine you're Sherlock Holmes. Solve the following case. Here's the data in JSON format:
+                Assume you are a super intellegent, pattern recognisation, connection identifying agent.
                 
                 Case Files:
                 {content}
@@ -255,12 +256,14 @@ def connection_api_view(req, case_id):
                 {notes}
                 
                 Instructions:
-                - Based on the file content, establish relationship between entites in the highlighted entites array.
+                - Check if a connection exists between the "Highlighted Entities".
+                - Derive the connection based on the "Case Files" and real world facts only.
+                - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
                 - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
                 - Ensure the output is in JSON format with the following structure:
-                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of  lines in the file used for the insight as the value
+                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the connection as the value
                 """.format(
-                    content=json.dumps(fileContent),
+                    content=json.dumps(file_content),
                     entities=json.dumps(data),
                     notes=case.notes,
                 )
@@ -279,7 +282,7 @@ def connection_api_view(req, case_id):
             }
             case.insights.append(new_insight)
             case.save()
-            return JsonResponse({"message": "Hypothesis generated!", "insights":case.insights})
+            return JsonResponse({"message": "Connection generated!", "insights":case.insights})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -304,10 +307,40 @@ def prediction_api_view(req, case_id):
                 event_text = prediction_text
             
             all_files = json.loads(case.files)
-            fileContent = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
+            file_content = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
 
             # MAKE API CALL to AI API and populate the output object in the new_insight object
             # replace the dummy 'output' object with the one generated bt AI
+            prompt =  """
+                Assume you are a super intellegent, pattern recognisation agent.
+                
+                Case Files:
+                {content}
+                
+                Hypothesis Text:
+                {event_text}
+                
+                Case Notes:
+                {notes}
+                
+                Instructions:
+                - Generate a hypothesis for "Hypothesis Text".
+                - Generate the hypothesis based on the "Case Files" and real world facts only.
+                - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
+                - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
+                - Ensure the output is in JSON format with the following structure:
+                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the hypothesis as the value
+                """.format(
+                    content=json.dumps(file_content),
+                    event_text=event_text,
+                    notes=case.notes,
+                )
+            try:
+                aiOutput = ai_function(prompt)
+            except Exception as e:
+                print("AI error",e )
+                return JsonResponse({"error": "AI connection error"}, status=400)
+            
             new_insight = {
                 "id": max([insight["id"] for insight in case.insights], default=0) + 1,
                 "generated_at": now().isoformat(),
@@ -316,29 +349,7 @@ def prediction_api_view(req, case_id):
                     "text": event_text,
                     "files": prediction_files,
                 },
-                "output":{
-                    "text": "akjsndfkjasfnjas",
-                    "files" : {
-                        "fbi25.txt": [
-                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
-                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
-                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
-                            "These cartons contained C-4 explosive."
-                        ],
-                        "fbi12.txt": [
-                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
-                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
-                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
-                            "These cartons contained C-4 explosive."
-                        ],
-                        "fbi55.txt": [
-                            "FBI [From police in North Bergen, NJ]: In the early morning hours of April 26, 2003 a passerby reported a fire in a carpet shop that is managed by a Erica Hahn of North Bergen .",
-                            "The fire seems to have been started the night before when someone tossed a cigarette butt into a waste basket in the basement of the shop.",
-                            "While firemen were extinguishing the blaze, they discovered several cartons labeled: PRIVATE: DO NOT OPEN.",
-                            "These cartons contained C-4 explosive."
-                        ]
-                    }
-                }
+                "output": json.loads(aiOutput)
             }
             case.insights.append(new_insight)
             case.save()

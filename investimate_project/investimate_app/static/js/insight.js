@@ -54,11 +54,17 @@ const resetSearch = (files) => {
 }
 
 const populateInsight = (insight) => {
-    document.getElementById('predictionTitle').innerText = insight.category + ': ' + insight.input.text;
-    document.getElementById('predictionValue').innerText = insight.output.text;
+    document.getElementById('insightTitle').innerText = insight.category + (insight.category == 'Hypothesis' ? ': ' + insight.input.text : ' between:');
+    document.getElementById('predictionValue').innerText = insight.output.insight;
+    if (insight.category == 'Connection') {
+        const list = document.getElementById('connection-items');
+        insight.input.entities.forEach((e) => {
+            const li = document.createElement('li');
+            li.innerText = `${e.text}(${e.file})`;
+            list.appendChild(li);
+        })
+    }
     const insightsFiles = document.getElementById('insightFiles');
-    console.log('files', insight.output);
-
     Object.keys(insight.output.files).forEach((file) => {
         const div = document.createElement('div');
         div.innerHTML = `

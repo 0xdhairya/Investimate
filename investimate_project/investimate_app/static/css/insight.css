@@ -10,6 +10,16 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+#insight-text-box,
+#connection-items {
+    max-height: 25%;
+    overflow: auto;
+}
+
+#connection-items {
+    font-size: medium;
+}
+
 #insightFiles {
     flex: 1;
     overflow-y: auto;
