@@ -10,7 +10,6 @@ urlpatterns = [
     path('cases/', views.cases_view, name='cases'),
     path("case/<int:case_id>/insight/<int:insight_id>/",views.insight_view, name='insight'),
     path("case/<int:case_id>/remove-insight/<int:id>/",views.remove_insight_view, name='remove-insight'),
-    path("cases/<int:case_id>/summary/", views.summary_view, name="case_summary"),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('signup/', views.signup_view, name='signup'),

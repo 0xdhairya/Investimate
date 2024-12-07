@@ -25,9 +25,7 @@
         </ol>
       </nav>
       <div class="case-buttons">
-        {% comment %} <form action="{% url 'case_summary' case.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-outline-info w-100">Generate AI Summary</button>
         </form> {% endcomment %}
         {% if case.status != 'Closed' %}
           <form action="{% url 'close-case' case.id %}" method="post">
@@ -76,6 +74,7 @@
               <small>Saved</small>
             </div>
           </div>
+          <p style="font-size: smaller;">Notes is dynamically saved if it's idle for 5 seconds</p>
           <textarea placeholder="Type your notes here..." id="case-notes"></textarea>
           <p class="error-text" id="notesError"></p>
         </div>
