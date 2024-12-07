@@ -62,29 +62,3 @@
     padding: 0;
     margin-top: 5px;
 }
-
-/* Regenerate Button Styling */
-.regenerate-button {
-    background-color: #f8f9fa; /* Light background */
-    color: black; /* Black text */
-    border: 1px solid #000; /* Black border */
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin-bottom: 10px; /* Space between buttons */
-    width: fit-content; /* Adjust width to fit text */
-}
-
-.regenerate-button:hover {
-    background-color: #e0e0e0; /* Slightly darker on hover */
-    transform: translateY(-2px); /* Lift effect */
-}
-
-.regenerate-button:active {
-    background-color: #d6d6d6; /* Even darker on click */
-    transform: translateY(0); /* Reset lift on click */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow */
-}
