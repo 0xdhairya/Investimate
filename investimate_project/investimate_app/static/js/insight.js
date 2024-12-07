@@ -27,8 +27,11 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
 
     saveButton.addEventListener('click', () => {
         // Before API call
-        // cancelButton.disabled = true;
-        // saveButton.disabled = true;
+        cancelButton.disabled = true;
+        saveButton.disabled = true;
+        saveButton.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Regenerating...`;
 
         const newPredictionFiles = [];
         const checkboxes = document.querySelectorAll('#all-file-checkbox .form-check-input:checked');
@@ -60,6 +63,7 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
             return response.json();
         }).then((data) => {
             console.log("Response from server:", data);
+            location.reload();
         }).catch((error) => {
             console.error("Error sending data:", error);
         }).finally(() => {

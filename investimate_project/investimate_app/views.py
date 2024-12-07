@@ -261,7 +261,7 @@ def connection_api_view(req, case_id):
                 - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
                 - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
                 - Ensure the output is in JSON format with the following structure:
-                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the connection as the value
+                    insight as the key and your generated insight as the value, and the files can be a second key with the value as JSON containing file names as the key and an array of lines in the file used to derive the connection (do not include unnecessary or irrevelant lines) as the value.
                 """.format(
                     content=json.dumps(file_content),
                     entities=json.dumps(data),
@@ -329,7 +329,7 @@ def prediction_api_view(req, case_id):
                 - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
                 - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
                 - Ensure the output is in JSON format with the following structure:
-                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the hypothesis as the value
+                    insight as the key and your generated insight as the value, and the files can be a second key with the value as JSON containing file names as the key and an array of lines in the file used to derive the hypothesis (do not include unnecessary or irrevelant lines) as the value.
                 """.format(
                     content=json.dumps(file_content),
                     event_text=event_text,
@@ -365,17 +365,24 @@ def regenerate_prediction_api_view(req, case_id, prediction_id):
         try:
             data = json.loads(req.body)
             print("Received data:", case_id, prediction_id, data)
-            return JsonResponse({"message": "Hypothesis regenerated!"})
             case = get_object_or_404(Case, id=case_id, user=req.user)
             prediction_files = data.get('predictionFiles')
+            
+            existing_insight_index = next(
+                (index for index, insight in enumerate(case.insights) if insight["id"] == prediction_id),
+                None
+            )
+            if existing_insight_index is None:
+                return JsonResponse({"error": "Prediction not found."}, status=404)
+            
+            existing_insight = case.insights[existing_insight_index]
+            event_text = existing_insight["input"]["text"]  # Retrieve event_text from the existing insight
             
             all_files = json.loads(case.files)
             file_content = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
 
-            # MAKE API CALL to AI API and populate the output object in the new_insight object
-            # replace the dummy 'output' object with the one generated bt AI
-            prompt =  """
-                Assume you are a super intellegent, pattern recognisation agent.
+            prompt = """
+                Assume you are a super intelligent, pattern recognition agent.
                 
                 Case Files:
                 {content}
@@ -388,35 +395,40 @@ def regenerate_prediction_api_view(req, case_id, prediction_id):
                 
                 Instructions:
                 - Generate a hypothesis for "Hypothesis Text".
-                - Generate the hypothesis based on the "Case Files" and real world facts only.
+                - Generate the hypothesis based on the "Case Files" and real-world facts only.
                 - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
-                - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
+                - Also, take case notes into consideration with 10% weightage into decision-making. These notes are user-given so they may or may not be accurate.
                 - Ensure the output is in JSON format with the following structure:
-                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the hypothesis as the value
-                """.format(
-                    content=json.dumps(file_content),
-                    event_text=event_text,
-                    notes=case.notes,
-                )
+                    insight as the key and your generated insight as the value, and the files can be a second key with the value as JSON containing file names as the key and an array of lines in the file used to derive the hypothesis (do not include unnecessary or irrevelant lines) as the value.
+            """.format(
+                content=json.dumps(file_content),
+                event_text=event_text,
+                notes=case.notes,
+            )
+            
             try:
                 aiOutput = ai_function(prompt)
             except Exception as e:
-                print("AI error",e )
+                print("AI error", e)
                 return JsonResponse({"error": "AI connection error"}, status=400)
             
-            new_insight = {
-                "id": max([insight["id"] for insight in case.insights], default=0) + 1,
+            # Create updated insight
+            updated_insight = {
+                "id": prediction_id,  # Retain the same ID
                 "generated_at": now().isoformat(),
-                "category": 'Hypothesis',
+                "category": "Hypothesis",
                 "input": {
                     "text": event_text,
                     "files": prediction_files,
                 },
-                "output": json.loads(aiOutput)
+                "output": json.loads(aiOutput),
             }
-            case.insights.append(new_insight)
+
+            # Replace the existing insight
+            case.insights[existing_insight_index] = updated_insight
             case.save()
-            return JsonResponse({"message": "Hypothesis generated!", "insights":case.insights})
+            
+            return JsonResponse({"message": "Hypothesis regenerated!", "insight": updated_insight})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
