@@ -3,21 +3,49 @@ import { insightsSection } from './case.js';
 export const setAiAction = () => {
     const dropdownItems = document.querySelectorAll('.ai-action-dropdown-items');
     const dropdownToggle = document.getElementById('aiActionDropdownMenu');
+    const infoIcon = document.getElementById('infoIcon'); // Info icon element
+
     dropdownItems.forEach(item => {
         item.addEventListener('click', (event) => {
             const aiAction = event.target.textContent;
             dropdownToggle.textContent = aiAction;
+
+            // Update sections visibility
             if (aiAction.toLowerCase() == 'hypothesize') {
                 document.getElementById('section-prediction').hidden = false;
                 document.getElementById('section-connection').hidden = true;
                 setDatePicker();
+
+                // Update tooltip for Hypothesize
+                updateTooltip(infoIcon, 'This will help you to hypothesize an event');
             } else {
                 document.getElementById('section-prediction').hidden = true;
                 document.getElementById('section-connection').hidden = false;
+
+                // Update tooltip for Connect
+                updateTooltip(infoIcon, 'This will help you to connect the entities');
             }
         });
     });
-}
+
+    // Initialize tooltip for the info icon
+    initializeTooltip(infoIcon);
+};
+
+// Function to initialize Bootstrap tooltip
+const initializeTooltip = (element) => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+};
+
+// Function to update tooltip dynamically
+const updateTooltip = (element, message) => {
+    const tooltipInstance = bootstrap.Tooltip.getInstance(element); // Get existing tooltip instance
+    element.setAttribute('title', message); // Update the tooltip title
+    tooltipInstance.setContent({ '.tooltip-inner': message }); // Dynamically update tooltip content
+};
 
 const predictionFilesButtons = () => {
     const checkboxes = document.querySelectorAll('#prediction-file-list .form-check-input');
