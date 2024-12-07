@@ -52,18 +52,6 @@
     border: 2px solid red;
 }
 
-#infoIcon {
-    cursor: pointer;
-    display: inline-block;
-    vertical-align: middle;
-    color: #007bff; /* Blue color for consistency */
-    margin-left: 5px;
-  }
-  
-  #infoIcon:hover {
-    color: #0056b3; /* Darker blue on hover */
-  }
-
 @media screen and (max-width: 768px) {
     .insight-buttons {
         flex-direction: column;
