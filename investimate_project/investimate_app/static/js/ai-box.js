@@ -120,6 +120,9 @@ const aiMakeConnection = (connectionButton, caseData) => {
         return;
     }
     connectionButton.disabled = true;
+    connectionButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Processing...`;
     fetch(`/api/case/${caseData.pk}/ai/connection`, {
         method: "POST",
         headers: {
@@ -146,6 +149,7 @@ const aiMakeConnection = (connectionButton, caseData) => {
         })
         .finally(() => {
             connectionButton.disabled = false;
+            connectionButton.innerHTML = 'Make Connection'
         });
 }
 
@@ -268,7 +272,9 @@ const aiMakePrediction = (predictionButton, caseData) => {
         body.endDate = document.getElementById('endDatePicker').value;
     }
     predictionButton.disabled = true;
-
+    predictionButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Processing...`;
     fetch(`/api/case/${caseData.pk}/ai/prediction`, {
         method: "POST",
         headers: {
@@ -284,10 +290,12 @@ const aiMakePrediction = (predictionButton, caseData) => {
     }).then((data) => {
         console.log("Response from server:", data);
         insightsSection(caseData.pk, data.insights);
+        alert(data.message)
     }).catch((error) => {
         console.error("Error sending data:", error);
     }).finally(() => {
         predictionButton.disabled = false;
+        predictionButton.innerHTML = 'Generate Hypothesis'
     });
 }
 

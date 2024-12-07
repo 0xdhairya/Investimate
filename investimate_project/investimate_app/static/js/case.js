@@ -52,19 +52,21 @@ const notesSection = (caseData) => {
 export const insightsSection = (case_id, insights) => {
     const insightElement = document.getElementById('insight-list');
     insightElement.innerHTML = ''
-    insights.forEach((insight, i) => {
+    for (let i = insights.length - 1; i >= 0; i--) {
+        const insight = insights[i];
         const insightItem = document.createElement('div');
         insightItem.classList.add('insight-item');
         if (insight.category == 'Hypothesis') {
-            insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.text}`;
+            insightItem.innerText = `${insight.id}. ${insight.category}: ${insight.input.text}`;
         } else if (insight.category == 'Connection') {
-            insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.entities[0].text}; ${insight.input.entities[1].text}${insight.input.entities.length > 2 ? ', + ' + (insight.input.entities.length - 2) + ' more' : ''}`;
+            insightItem.innerText = `${insight.id}. ${insight.category}: ${insight.input.entities[0].text}; ${insight.input.entities[1].text}${insight.input.entities.length > 2 ? ', + ' + (insight.input.entities.length - 2) + ' more' : ''}`;
         }
         insightItem.addEventListener("click", () => {
             window.location.href = `/case/${case_id}/insight/${insight.id}`;
         });
         insightElement.appendChild(insightItem);
-    })
+    }
+
 }
 
 const checkForMinTwoEntities = () => {
