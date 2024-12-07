@@ -20,7 +20,7 @@ urlpatterns = [
     path('api/case/highlight/<int:case_id>/', views.save_highlight_view, name='save-highlight'),
     path("api/case/<int:case_id>/update-notes",views.update_notes_api_view, name='case-update-notes'),
     path("api/case/<int:case_id>/ai/prediction",views.prediction_api_view, name='case-prediction'),
+    path("api/case/<int:case_id>/ai/regenerate-prediction/<int:prediction_id>/",views.regenerate_prediction_api_view, name='regenerate-prediction'),
     path("api/case/<int:case_id>/ai/connection",views.connection_api_view, name='case-connection'),
     path('api/cases/', views.cases_api_view, name='cases_api'),
-    # path("api/insights/",views.insights, name='insights'),
 ]

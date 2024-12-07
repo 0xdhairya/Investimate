@@ -1,4 +1,8 @@
-const fillPredictionFiles = (allFiles, predictionFiles) => {
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
     const predictionFilesEle = document.getElementById('prediction-file-list');
     const newInputFilesEle = document.getElementById('all-file-checkbox');
     const editButton = document.getElementById('edit-prediction-files');
@@ -23,17 +27,52 @@ const fillPredictionFiles = (allFiles, predictionFiles) => {
 
     saveButton.addEventListener('click', () => {
         // Before API call
-        cancelButton.disabled = true;
-        saveButton.disabled = true;
+        // cancelButton.disabled = true;
+        // saveButton.disabled = true;
+
+        const newPredictionFiles = [];
+        const checkboxes = document.querySelectorAll('#all-file-checkbox .form-check-input:checked');
+        checkboxes.forEach((checkbox) => {
+            newPredictionFiles.push(checkbox.value);
+        });
+        console.log('New Files', newPredictionFiles);
+
+        let equal = false;
+        predictionFiles.sort();
+        newPredictionFiles.sort();
+        equal = predictionFiles.join() == newPredictionFiles.join()
+        if (equal) {
+            alert('No changes in files detected!');
+            return;
+        }
+
+        fetch(`/api/case/${caseId}/ai/regenerate-prediction/${insightId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ predictionFiles: newPredictionFiles }),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response from server:", data);
+        }).catch((error) => {
+            console.error("Error sending data:", error);
+        }).finally(() => {
+        });
 
         // After API call success
-        cancelButton.hidden = true;
-        saveButton.hidden = true;
-        editButton.hidden = false;
-        cancelButton.disabled = false;
-        saveButton.disabled = false;
-        predictionFilesEle.hidden = false;
-        newInputFilesEle.hidden = true;
+        // cancelButton.hidden = true;
+        // saveButton.hidden = true;
+        // editButton.hidden = false;
+        // cancelButton.disabled = false;
+        // saveButton.disabled = false;
+        // predictionFilesEle.hidden = false;
+        // newInputFilesEle.hidden = true;
     });
 
     predictionFiles.forEach((file) => {
@@ -144,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
             searchKeyword(files);
             resetSearch(files);
             if (data.insight.category == 'Hypothesis')
-                fillPredictionFiles(files, data.insight.input.files);
+                fillPredictionFiles(caseId, insightId, files, data.insight.input.files);
             populateInsight(data.insight);
         })
         .catch((error) => {

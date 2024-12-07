@@ -241,7 +241,7 @@ def connection_api_view(req, case_id):
         try:
             data = json.loads(req.body)
             print("Received data:", data)
-            case = get_object_or_404(Case, id=case_id)
+            case = get_object_or_404(Case, id=case_id, user=req.user)
             file_content = {filename: details["content"] for filename, details in json.loads(case.files).items()}
             prompt =  """
                 Assume you are a super intellegent, pattern recognisation, connection identifying agent.
@@ -293,7 +293,7 @@ def prediction_api_view(req, case_id):
         try:
             data = json.loads(req.body)
             print("Received data:", data)
-            case = get_object_or_404(Case, id=case_id)
+            case = get_object_or_404(Case, id=case_id, user=req.user)
             prediction_text = data.get('predictionText')
             prediction_files = data.get('predictionFiles')
             date = data.get('date')
@@ -305,6 +305,69 @@ def prediction_api_view(req, case_id):
                 event_text = f"{prediction_text}, between {start_date} and {end_date}"
             else:
                 event_text = prediction_text
+            
+            all_files = json.loads(case.files)
+            file_content = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
+
+            # MAKE API CALL to AI API and populate the output object in the new_insight object
+            # replace the dummy 'output' object with the one generated bt AI
+            prompt =  """
+                Assume you are a super intellegent, pattern recognisation agent.
+                
+                Case Files:
+                {content}
+                
+                Hypothesis Text:
+                {event_text}
+                
+                Case Notes:
+                {notes}
+                
+                Instructions:
+                - Generate a hypothesis for "Hypothesis Text".
+                - Generate the hypothesis based on the "Case Files" and real world facts only.
+                - It might be possible that not all files are relevant. So, figure out relevant files and derive from those files only, do not consider irrelevant files.
+                - Also, take case notes into consideration with 10% weightage into decision making. These notes are user given so it may or may not be accurate.
+                - Ensure the output is in JSON format with the following structure:
+                    insight as the key and your generated insight as the value, and the files can be second key and the value can be json with file names as the key and an array of lines in the file used to derive the hypothesis as the value
+                """.format(
+                    content=json.dumps(file_content),
+                    event_text=event_text,
+                    notes=case.notes,
+                )
+            try:
+                aiOutput = ai_function(prompt)
+            except Exception as e:
+                print("AI error",e )
+                return JsonResponse({"error": "AI connection error"}, status=400)
+            
+            new_insight = {
+                "id": max([insight["id"] for insight in case.insights], default=0) + 1,
+                "generated_at": now().isoformat(),
+                "category": 'Hypothesis',
+                "input": {
+                    "text": event_text,
+                    "files": prediction_files,
+                },
+                "output": json.loads(aiOutput)
+            }
+            case.insights.append(new_insight)
+            case.save()
+            return JsonResponse({"message": "Hypothesis generated!", "insights":case.insights})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    
+@login_required
+def regenerate_prediction_api_view(req, case_id, prediction_id):
+    if req.method == "POST":
+        try:
+            data = json.loads(req.body)
+            print("Received data:", case_id, prediction_id, data)
+            return JsonResponse({"message": "Hypothesis regenerated!"})
+            case = get_object_or_404(Case, id=case_id, user=req.user)
+            prediction_files = data.get('predictionFiles')
             
             all_files = json.loads(case.files)
             file_content = {filename: details["content"] for filename, details in all_files.items() if filename in prediction_files}
