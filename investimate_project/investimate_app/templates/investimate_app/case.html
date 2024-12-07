@@ -27,12 +27,6 @@
       <div class="case-buttons">
           {% csrf_token %}
         </form> {% endcomment %}
-        {% if case.status != 'Closed' %}
-          <form action="{% url 'close-case' case.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" onclick="return confirmCaseClose()" class="btn btn-sm btn-outline-success w-100">Close Case</button>
-          </form>
-        {% endif %}
         <form action="{% url 'delete-case' case.id %}" method="post">
           {% csrf_token %}
           <button type="submit" onclick="return confirmCaseDelete()" class="btn btn-sm btn-outline-danger w-100">Delete Case</button>
