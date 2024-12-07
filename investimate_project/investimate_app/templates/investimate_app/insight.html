@@ -30,12 +30,18 @@
         <h2>{{ case.name }}</h2>
         <p class="small">{{ case.description }}</p>
       </div>
-      <div>
+      <div class="d-flex flex-column align-items-start gap-2">
+        <!-- Regenerate Button -->
+        <button class="btn btn-outline-secondary btn-sm regenerate-button">Regenerate</button>
+        
+        <!-- Remove Insight Button -->
         <form action="{% url 'remove-insight' case.id insight.id %}" method="post">
-          {% csrf_token %}
-          <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">Remove {{ insight.category }}</button>
+            {% csrf_token %}
+            <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">
+                Remove {{ insight.category }}
+            </button>
         </form>
-      </div>
+    </div>
     </div>
 
     <!-- Modal -->
