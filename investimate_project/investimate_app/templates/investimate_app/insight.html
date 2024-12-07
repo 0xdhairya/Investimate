@@ -55,7 +55,14 @@
       <div class="section-container" id="insight-info">
         <p class="h5" id="insightTitle"></p>
         <ul class="h5 font-monospace" id="connection-items"></ul>
-        <p class="m-0">Insight by InvestiMate AI:</p>
+        <div class="d-flex align-items-center justify-content-between p-2">
+          <p class="m-0">Insight by InvestiMate AI:</p>
+          <div class="d-flex gap-2">
+            <button id="edit-insight" class="btn btn-sm btn-outline-secondary">Edit</button>
+            <button id="cancel-insight" class="btn btn-sm btn-outline-danger" hidden>Cancel</button>
+            <button id="save-insight" class="btn btn-sm btn-outline-success" hidden>Save</button>
+          </div>
+        </div>
         <div class="shadow-sm p-1" id="insight-text-box">
           <p class="h5 font-monospace" id="predictionValue"></p>
         </div>

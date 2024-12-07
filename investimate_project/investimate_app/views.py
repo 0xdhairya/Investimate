@@ -358,7 +358,34 @@ def prediction_api_view(req, case_id):
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-    
+@login_required
+def update_insight_view(req, case_id, insight_id):
+    if req.method == 'POST':
+        try:
+            data = json.loads(req.body)
+            updated_text = data.get('updatedInsight')
+
+            if not updated_text:
+                return JsonResponse({'error': 'No updated insight provided'}, status=400)
+
+            case = get_object_or_404(Case, id=case_id)
+
+            insight_found = False
+            for insight in case.insights:
+                if insight['id'] == insight_id:
+                    insight['output']['insight'] = updated_text
+                    insight_found = True
+                    break
+
+            if not insight_found:
+                return JsonResponse({'error': 'Insight not found'}, status=404)
+
+            case.save()
+            return JsonResponse({'message': 'Insight updated successfully!'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 @login_required
 def regenerate_prediction_api_view(req, case_id, prediction_id):
     if req.method == "POST":

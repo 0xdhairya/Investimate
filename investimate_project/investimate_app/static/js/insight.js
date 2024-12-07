@@ -69,15 +69,6 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
             console.error("Error sending data:", error);
         }).finally(() => {
         });
-
-        // After API call success
-        // cancelButton.hidden = true;
-        // saveButton.hidden = true;
-        // editButton.hidden = false;
-        // cancelButton.disabled = false;
-        // saveButton.disabled = false;
-        // predictionFilesEle.hidden = false;
-        // newInputFilesEle.hidden = true;
     });
 
     predictionFiles.forEach((file) => {
@@ -141,9 +132,71 @@ const resetSearch = (files) => {
     })
 }
 
-const populateInsight = (insight) => {
+const populateInsight = (caseId, insight) => {
     document.getElementById('insightTitle').innerText = insight.category + (insight.category == 'Hypothesis' ? ': ' + insight.input.text : ' between:');
+    const predictionValueElement = document.getElementById('predictionValue');
     document.getElementById('predictionValue').innerText = insight.output.insight;
+    const editButton = document.getElementById('edit-insight');
+    const cancelButton = document.getElementById('cancel-insight');
+    const saveButton = document.getElementById('save-insight');
+    editButton.addEventListener('click', () => {
+
+        const textArea = document.createElement('textarea');
+        textArea.id = 'edit-prediction-text';
+        textArea.classList.add('form-control');
+        textArea.classList.add('font-monospace');
+        textArea.value = insight.output.insight;
+        predictionValueElement.replaceWith(textArea);
+
+        cancelButton.hidden = false;
+        saveButton.hidden = false;
+        editButton.hidden = true;
+    });
+
+    cancelButton.addEventListener('click', () => {
+        const textArea = document.getElementById('edit-prediction-text');
+        textArea.replaceWith(predictionValueElement);
+        predictionValueElement.innerText = insight.output.insight;
+
+        cancelButton.hidden = true;
+        saveButton.hidden = true;
+        editButton.hidden = false;
+    });
+
+    saveButton.addEventListener('click', () => {
+        cancelButton.disabled = true;
+        saveButton.disabled = true;
+        saveButton.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Saving...`;
+        const textArea = document.getElementById('edit-prediction-text');
+        const updatedText = textArea.value;
+
+        fetch(`/api/case/${caseId}/update-insight/${insight.id}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ updatedInsight: updatedText }),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response from server:", data);
+            location.reload();
+        }).catch((error) => {
+            console.error("Error sending data:", error);
+            alert(error.message)
+        }).finally(() => {
+            saveButton.innerHTML = 'Save';
+            cancelButton.disabled = false;
+            saveButton.disabled = false;
+        })
+    });
+
     if (insight.category == 'Connection') {
         const list = document.getElementById('connection-items');
         insight.input.entities.forEach((e) => {
@@ -189,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
             resetSearch(files);
             if (data.insight.category == 'Hypothesis')
                 fillPredictionFiles(caseId, insightId, files, data.insight.input.files);
-            populateInsight(data.insight);
+            populateInsight(caseId, data.insight);
         })
         .catch((error) => {
             console.error("Error fetching case data:", error);
