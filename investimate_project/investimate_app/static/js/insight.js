@@ -31,8 +31,10 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
         checkboxes.forEach((checkbox) => {
             newPredictionFiles.push(checkbox.value);
         });
-        console.log('New Files', newPredictionFiles);
-
+        if (newPredictionFiles.length === 0) {
+            alert('No files selected. Please select at least one file.');
+            return;
+        }
         let equal = false;
         predictionFiles.sort();
         newPredictionFiles.sort();
