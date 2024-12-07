@@ -3,13 +3,10 @@ import { insightsSection } from './case.js';
 export const setAiAction = () => {
     const dropdownItems = document.querySelectorAll('.ai-action-dropdown-items');
     const dropdownToggle = document.getElementById('aiActionDropdownMenu');
-
     dropdownItems.forEach(item => {
         item.addEventListener('click', (event) => {
             const aiAction = event.target.textContent;
             dropdownToggle.textContent = aiAction;
-
-            // Update sections visibility
             if (aiAction.toLowerCase() == 'hypothesize') {
                 document.getElementById('section-prediction').hidden = false;
                 document.getElementById('section-connection').hidden = true;
