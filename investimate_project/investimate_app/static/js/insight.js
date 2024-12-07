@@ -26,13 +26,6 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
     });
 
     saveButton.addEventListener('click', () => {
-        // Before API call
-        cancelButton.disabled = true;
-        saveButton.disabled = true;
-        saveButton.innerHTML = `
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Regenerating...`;
-
         const newPredictionFiles = [];
         const checkboxes = document.querySelectorAll('#all-file-checkbox .form-check-input:checked');
         checkboxes.forEach((checkbox) => {
@@ -48,6 +41,12 @@ const fillPredictionFiles = (caseId, insightId, allFiles, predictionFiles) => {
             alert('No changes in files detected!');
             return;
         }
+
+        cancelButton.disabled = true;
+        saveButton.disabled = true;
+        saveButton.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Regenerating...`;
 
         fetch(`/api/case/${caseId}/ai/regenerate-prediction/${insightId}/`, {
             method: "POST",

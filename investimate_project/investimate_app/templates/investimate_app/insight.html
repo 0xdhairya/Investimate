@@ -33,7 +33,7 @@
       <div>
         <form action="{% url 'remove-insight' case.id insight.id %}" method="post">
           {% csrf_token %}
-          <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">Remove {{ insight.category }}</button>
+          <button type="submit" onclick="return confirmInsightDelete()" class="btn btn-sm btn-outline-danger w-100">Remove {{ insight.category }} Insight</button>
         </form>
       </div>
     </div>

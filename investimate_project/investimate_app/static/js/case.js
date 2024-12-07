@@ -57,9 +57,9 @@ export const insightsSection = (case_id, insights) => {
         const insightItem = document.createElement('div');
         insightItem.classList.add('insight-item');
         if (insight.category == 'Hypothesis') {
-            insightItem.innerText = `${insight.id}. ${insight.category}: ${insight.input.text}`;
+            insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.text}`;
         } else if (insight.category == 'Connection') {
-            insightItem.innerText = `${insight.id}. ${insight.category}: ${insight.input.entities[0].text}; ${insight.input.entities[1].text}${insight.input.entities.length > 2 ? ', + ' + (insight.input.entities.length - 2) + ' more' : ''}`;
+            insightItem.innerText = `${i + 1}. ${insight.category}: ${insight.input.entities[0].text}; ${insight.input.entities[1].text}${insight.input.entities.length > 2 ? ', + ' + (insight.input.entities.length - 2) + ' more' : ''}`;
         }
         insightItem.addEventListener("click", () => {
             window.location.href = `/case/${case_id}/insight/${insight.id}`;
@@ -165,12 +165,27 @@ const populateCaseFiles = (caseData) => {
     }
     Object.keys(files).forEach((file, i) => {
         const li = document.createElement("li");
-        li.innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary">${file}</button>`;
-        fileList.appendChild(li);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-sm btn-outline-primary";
+        button.textContent = file;
         if (i == 0) {
-            fillInCase(file)
+            fillInCase(file);
+            button.classList.remove("btn-outline-primary");
+            button.classList.add("btn-primary");
         }
-        li.addEventListener("click", () => fillInCase(file));
+        button.addEventListener("click", () => {
+            fillInCase(file);
+
+            const allButtons = document.querySelectorAll("#file-list button");
+            allButtons.forEach((btn) => btn.classList.remove("btn-primary"));
+            allButtons.forEach((btn) => btn.classList.add("btn-outline-primary"));
+            button.classList.remove("btn-outline-primary");
+            button.classList.add("btn-primary");
+        });
+
+        li.appendChild(button);
+        fileList.appendChild(li);
     });
     fillPredictionFiles(Object.keys(files));
 }
