@@ -1,8 +1,15 @@
 <div class="aibox">
   <p class="h5 text-decoration-underline text-center">InvestiMate AI</p>
-  <div class="mt-2 dropdown text-center">
-    <label for="ai-action">The InvestiMate AI will</label>
-    <p class="text-dropdown-toggle" id="aiActionDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">[Choose Action]</p>
+  <div class="mt-2 dropdown d-flex align-items-center justify-content-center">
+    <label for="ai-action" class="m-0">The InvestiMate AI will</label>
+    <p class="text-dropdown-toggle ms-3" id="aiActionDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">[Choose Action]</p>
+    <span id="infoIcon" data-bs-toggle="tooltip" class="ms-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+        <path d="M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1zm0 1a6 6 0 1 0 0 12A6 6 0 0 0 8 2z" />
+        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.056.352.176.288.469l-.738 3.468c-.194.91.105 1.319.808 1.319.545 0 .908-.252 1.07-.568.131-.252.172-.568.14-.808l-.287-1.319c-.06-.293.083-.294.36-.176l.467.213c.287.131.468.07.574-.218l.467-1.319c.106-.287.057-.496-.164-.587l-.58-.287c-.105-.07-.147-.105-.115-.176z" />
+        <circle cx="8" cy="4.5" r="1" />
+      </svg>
+    </span>
     <div class="dropdown-menu ai-action-dropdown-items p-0" aria-labelledby="aiActionDropdownMenu">
       <p class="dropdown-item">Hypothesize</p>
       <p class="dropdown-item">Connect</p>
