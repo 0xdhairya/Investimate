@@ -107,7 +107,7 @@ const aiMakeConnection = (connectionButton, caseData) => {
     errorBox.innerText = '';
     const checkboxes = document.querySelectorAll('#entity-list .form-check-input:checked');
 
-    checkboxes.forEach((checkbox, i) => {
+    checkboxes.forEach((checkbox) => {
         entities.push({
             category: checkbox.dataset.category,
             file: checkbox.dataset.file,
@@ -143,6 +143,7 @@ const aiMakeConnection = (connectionButton, caseData) => {
             });
             console.log("Response from server:", data);
             insightsSection(caseData.pk, data.insights);
+            alert(data.message);
         })
         .catch((error) => {
             console.error("Error sending data:", error);
@@ -290,7 +291,7 @@ const aiMakePrediction = (predictionButton, caseData) => {
     }).then((data) => {
         console.log("Response from server:", data);
         insightsSection(caseData.pk, data.insights);
-        alert(data.message)
+        alert(data.message);
     }).catch((error) => {
         console.error("Error sending data:", error);
     }).finally(() => {
